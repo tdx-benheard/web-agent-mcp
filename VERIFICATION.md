@@ -5,7 +5,7 @@
 All components have been successfully installed and configured:
 
 ### 1. Server Implementation ✓
-- **Location**: `C:\AAMCP\src\index.ts`
+- **Location**: `C:\source\mcp\web-agent-mcp\src\index.ts`
 - **Features**: All 15 browser automation tools implemented
 - **Build Status**: Successfully compiled to `dist/index.js`
 
@@ -43,7 +43,7 @@ All components have been successfully installed and configured:
 
 ### 4. Global Configuration ✓
 - **Config File**: `C:\Users\ben.heard\AppData\Roaming\Claude\claude_desktop_config.json`
-- **Server Name**: `aamcp-browser`
+- **Server Name**: `web-agent-mcp`
 - **Accessibility**: Available in all Claude Code instances after restart
 
 ### 5. Test Results ✓
@@ -65,13 +65,13 @@ Type "MCP protocol" in the search field
 
 ### Direct Testing:
 ```bash
-cd C:\AAMCP
+cd C:\source\mcp\web-agent-mcp
 node test-server.mjs
 ```
 
 ## Directory Structure
 ```
-C:\AAMCP\
+C:\source\mcp\web-agent-mcp\
 ├── src/
 │   └── index.ts         # TypeScript source
 ├── dist/
@@ -91,7 +91,7 @@ C:\AAMCP\
 ### If tools don't appear in Claude:
 1. **Restart Claude Desktop** (required for config changes)
 2. Check logs: `%APPDATA%\Claude\logs\mcp*.log`
-3. Verify server is built: `cd C:\AAMCP && npm run build`
+3. Verify server is built: `cd C:\source\mcp\web-agent-mcp && npm run build`
 
 ### If browser automation fails:
 1. Install Playwright browser: `npx playwright install chromium`
@@ -112,7 +112,7 @@ C:\AAMCP\
 ## Next Steps
 1. **Restart Claude Desktop** to activate the MCP server
 2. Test browser automation in any Claude Code instance
-3. Screenshots will be saved to `C:\AAMCP\screenshots\`
+3. Screenshots will be saved to `C:\source\mcp\web-agent-mcp\screenshots\`
 
 ---
 **Status**: ✅ FULLY OPERATIONAL

@@ -80,7 +80,7 @@ async function cleanup() {
 // Create MCP server
 const server = new Server(
   {
-    name: 'aamcp-browser-server',
+    name: 'web-agent-mcp',
     version: '1.0.0',
   },
   {
@@ -743,7 +743,7 @@ async function main() {
   const transport = new StdioServerTransport();
   await server.connect(transport);
 
-  console.error('AAMCP Browser Server running on stdio');
+  console.error('Web Agent MCP Server running on stdio');
 
   // Cleanup on exit
   process.on('SIGINT', async () => {

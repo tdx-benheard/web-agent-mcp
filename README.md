@@ -85,7 +85,7 @@ Parse the screenshot to extract text
 ## Directory Structure
 
 ```
-C:\AAMCP\
+C:\source\mcp\web-agent-mcp\
 ├── src/              # TypeScript source files
 │   └── index.ts      # Main server implementation
 ├── dist/             # Compiled JavaScript files
@@ -121,6 +121,6 @@ To modify the server:
 ## Security Notes
 
 - The server runs with local permissions
-- Screenshots are stored locally in `C:\AAMCP\screenshots\`
+- Screenshots are stored locally in `C:\source\mcp\web-agent-mcp\screenshots\`
 - Cookies and credentials are handled in memory only
 - Browser runs in sandboxed mode

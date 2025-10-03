@@ -1,10 +1,10 @@
-// Test script for AAMCP Browser Server
+// Test script for Web Agent MCP Server
 // This tests the server's basic functionality
 
 const { spawn } = require('child_process');
 const path = require('path');
 
-console.log('Testing AAMCP Browser Server...\n');
+console.log('Testing Web Agent MCP Server...\n');
 
 // Start the server
 const serverPath = path.join(__dirname, 'dist', 'index.js');
@@ -28,7 +28,7 @@ server.stdout.on('data', (data) => {
 
 server.stderr.on('data', (data) => {
   const error = data.toString();
-  if (!error.includes('AAMCP Browser Server running')) {
+  if (!error.includes('Web Agent MCP Server running')) {
     console.error('Server Error:', error);
   } else {
     console.log('✓ Server started successfully');
