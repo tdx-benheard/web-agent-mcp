@@ -1,4 +1,4 @@
-# AAMCP Browser Server
+# Web Agent MCP Server
 
 An MCP (Model Context Protocol) server that provides browser automation capabilities to Claude Desktop and Claude Code.
 
@@ -15,29 +15,30 @@ An MCP (Model Context Protocol) server that provides browser automation capabili
 - **Scrolling**: Programmatic page scrolling
 - **Wait Conditions**: Wait for elements or conditions
 
-## Installation
+## Quick Start
 
-1. Navigate to the AAMCP directory:
 ```bash
-cd C:\AAMCP
-```
+# Clone the repository
+git clone https://github.com/tdx-benheard/web-agent-mcp.git
+cd web-agent-mcp
 
-2. Install dependencies:
-```bash
+# Install dependencies
 npm install
-```
 
-3. Build the TypeScript code:
-```bash
-npm run build
-```
-
-4. Install Playwright browsers:
-```bash
+# Install Playwright browser
 npx playwright install chromium
+
+# Build the project
+npm run build
+
+# Start the server
+npm start
 ```
+
+For detailed installation instructions, see [INSTALL.md](INSTALL.md).
 
 ## Configuration
+
 
 The server is configured in Claude Desktop via the configuration file at:
 `%APPDATA%\Claude\claude_desktop_config.json`
