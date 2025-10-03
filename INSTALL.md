@@ -4,6 +4,7 @@
 
 Before installing this MCP server, ensure you have:
 
+- **Claude Desktop** application installed ([Download](https://claude.ai/download))
 - **Node.js** version 18.0 or higher ([Download](https://nodejs.org/))
 - **npm** (comes with Node.js)
 - **Git** for cloning the repository
