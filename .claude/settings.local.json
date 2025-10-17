@@ -1,0 +1,25 @@
+{
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "WebFetch(domain:scottspence.com)",
+      "WebFetch(domain:github.com)",
+      "Bash(rm:*)",
+      "mcp__web-agent-mcp__navigate",
+      "mcp__web-agent-mcp__get_page_content",
+      "mcp__web-agent-mcp__type",
+      "mcp__web-agent-mcp__click",
+      "mcp__web-agent-mcp__wait",
+      "mcp__web-agent-mcp__screenshot",
+      "mcp__web-agent-mcp__list_screenshots",
+      "mcp__web-agent-mcp__query_page",
+      "Bash(node -e:*)",
+      "Bash(npm run build:*)",
+      "Read(//c/source/TDDev/enterprise/TDWorkManagement/VueLibrarySource/src/Shared/Components/**)",
+      "Read(//c/source/TDDev/enterprise/TDWorkManagement/wwwroot/tdx-dashboards/**)",
+      "Read(//c/source/TDDev/enterprise/TDWorkManagement/VueLibrarySource/**)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

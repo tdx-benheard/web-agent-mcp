@@ -83,6 +83,7 @@ export interface QueryPageArgs {
     selector: string;
     extract?: 'text' | 'innerText' | 'html' | 'outerHTML';
     index?: number;
+    all?: boolean;
   }>;
 }
 
@@ -101,6 +102,7 @@ export interface QuerySpec {
   selector: string;
   extract?: 'text' | 'innerText' | 'html' | 'outerHTML';
   index?: number;
+  all?: boolean;
 }
 
-export type QueryResults = Record<string, string | null>;
+export type QueryResults = Record<string, string | string[] | null>;

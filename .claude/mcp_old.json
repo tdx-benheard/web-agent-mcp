@@ -1,0 +1,24 @@
+{
+  "mcpServers": {
+    "web-agent-mcp": {
+      "type": "stdio",
+      "command": "node",
+      "args": [
+        "C:/source/MCP/web-agent-mcp/dist/index.js"
+      ],
+      "env": {}
+    },
+    "tdx-api-mcp": {
+      "type": "stdio",
+      "command": "node",
+      "args": [
+        "C:/source/MCP/tdx-api-mcp/dist/index.js"
+      ],
+      "env": {
+        "TDX_PROD_CREDENTIALS_FILE": "C:\\Users\\ben.heard\\.config\\tdx\\prod-credentials.json",
+        "TDX_DEV_CREDENTIALS_FILE": "C:\\Users\\ben.heard\\.config\\tdx\\dev-credentials.json",
+        "TDX_DEFAULT_ENVIRONMENT": "prod"
+      }
+    }
+  }
+}

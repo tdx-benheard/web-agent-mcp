@@ -30,49 +30,60 @@ export async function handleQueryPage(args: QueryPageArgs): Promise<ToolResult> 
 
   // Execute all queries in the browser context
   const results = await page.evaluate((querySpecs: QuerySpec[]): QueryResults => {
-    const output: Record<string, string | null> = {};
+    const output: Record<string, string | string[] | null> = {};
 
     for (const spec of querySpecs) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const elements = (globalThis as any).document.querySelectorAll(spec.selector);
 
       if (elements.length === 0) {
-        output[spec.name] = null;
+        output[spec.name] = spec.all ? [] : null;
         continue;
       }
 
-      // Select which element to use
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      let element: any | undefined;
-      if (spec.index !== undefined) {
-        const idx = spec.index < 0 ? elements.length + spec.index : spec.index;
-        element = elements[idx];
-      } else {
-        element = elements[0];
-      }
-
-      if (!element) {
-        output[spec.name] = null;
-        continue;
-      }
-
-      // Extract the requested content
       const extractType = spec.extract || 'text';
-      switch (extractType) {
-        case 'text':
-          output[spec.name] = element.textContent?.trim() || '';
-          break;
-        case 'innerText':
-          output[spec.name] = element.innerText?.trim() || '';
-          break;
-        case 'html':
-          output[spec.name] = element.innerHTML;
-          break;
-        case 'outerHTML':
-          output[spec.name] = element.outerHTML;
-          break;
-        default:
-          output[spec.name] = element.textContent?.trim() || '';
+
+      // Helper function to extract content from an element
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const extractContent = (element: any): string => {
+        switch (extractType) {
+          case 'text':
+            return element.textContent?.trim() || '';
+          case 'innerText':
+            return element.innerText?.trim() || '';
+          case 'html':
+            return element.innerHTML;
+          case 'outerHTML':
+            return element.outerHTML;
+          default:
+            return element.textContent?.trim() || '';
+        }
+      };
+
+      // If 'all' is true, return array of all matching elements
+      if (spec.all) {
+        const results: string[] = [];
+        for (let i = 0; i < elements.length; i++) {
+          results.push(extractContent(elements[i]));
+        }
+        output[spec.name] = results;
+      } else {
+        // Select which element to use
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        let element: any | undefined;
+        if (spec.index !== undefined) {
+          const idx = spec.index < 0 ? elements.length + spec.index : spec.index;
+          element = elements[idx];
+        } else {
+          element = elements[0];
+        }
+
+        if (!element) {
+          output[spec.name] = null;
+          continue;
+        }
+
+        output[spec.name] = extractContent(element);
       }
     }
 

@@ -239,7 +239,12 @@ export const toolDefinitions: Tool[] = [
               },
               index: {
                 type: 'number',
-                description: 'Which element to select if multiple match (0-based, -1 for last). If not provided, returns first match.'
+                description: 'Which element to select if multiple match (0-based, -1 for last). Ignored if all is true.'
+              },
+              all: {
+                type: 'boolean',
+                description: 'If true, returns an array of all matching elements. If false or not provided, returns single element based on index.',
+                default: false
               }
             },
             required: ['name', 'selector']
