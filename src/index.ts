@@ -35,6 +35,9 @@ import { handleScreenshot, handleParseScreenshot, handleListScreenshots } from '
 // Import tool handlers - content
 import { handleGetPageContent, handleQueryPage } from './tools/content.js';
 
+// Import tool handlers - debugging
+import { handleGetConsoleLogs, handleExecuteConsole } from './tools/debugging.js';
+
 // Import types
 import {
   NavigateArgs,
@@ -130,6 +133,12 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         return await handleGetPageContent(args as unknown as GetPageContentArgs) as never;
       case 'query_page':
         return await handleQueryPage(args as unknown as QueryPageArgs) as never;
+
+      // Debugging tools
+      case 'get_console_logs':
+        return await handleGetConsoleLogs(args as { clear?: boolean; filter?: string }) as never;
+      case 'execute_console':
+        return await handleExecuteConsole(args as { code: string }) as never;
 
       default:
         throw new McpError(

@@ -1,12 +1,21 @@
 import { Page, BrowserContext, Browser } from 'playwright';
 import { Worker } from 'tesseract.js';
 
+// Console message type
+export interface ConsoleMessage {
+  type: string;
+  text: string;
+  timestamp: number;
+  location?: string;
+}
+
 // Browser state
 export interface BrowserState {
   browser: Browser | null;
   context: BrowserContext | null;
   currentPage: Page | null;
   ocrWorker: Worker | null;
+  consoleMessages: ConsoleMessage[];
 }
 
 // Tool argument types

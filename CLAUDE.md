@@ -12,16 +12,22 @@ When committing changes to this repository, always push to GitHub automatically 
 
 ### Credentials (CANARY)
 - **Environment**: CANARY (eng.teamdynamixcanary.com)
+- **Base URL**: `https://eng.teamdynamixcanary.com/`
+- **Login Paths**: You can sign into any of these:
+  - `/TDNext` - Next-gen interface
+  - `/TDClient` - Client interface
+  - `/TDAdmin` - Admin interface
 - **Username**: `bheard`
 - **Password (DPAPI)**: `dpapi:AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAqJA/rcsAEUK/lo7/r55ijgAAAAACAAAAAAAQZgAAAAEAACAAAAB8xPFjXo6R+0clqgDWQwughwA3Hv37b578v2wGEkG/BwAAAAAOgAAAAAIAACAAAABIGMfezTdPSVjFjkU7OgVuJd7xBvm6oJAFzVAmLHre7BAAAABRAqatX6hBmHdRnR8F8pblQAAAAI26jPBfqrDOp4RhuNWnsnjlCoXCyvFsIPbORHkLr3EgH9W3x2bdcSHbJeEBFL9fLCZ6dV3DGAzqQ294474oC60=`
 
 ### Login Process
-1. Navigate to any protected TeamDynamix page (it will redirect to login if needed)
-2. Use these selectors to fill the form:
+1. Navigate to base URL or any protected TeamDynamix page (it will redirect to login if needed)
+2. **Note**: If already authenticated, the page will load directly without showing a login form
+3. If login form appears, use these selectors:
    - Username field: `#txtUserName`
    - Password field: `#txtPassword`
    - Submit button: `#btnSignIn`
-3. Wait 5 seconds after clicking submit for the page to load
+4. Wait 5 seconds after clicking submit for the page to load
 
 ### Security Warning: Password Visibility
 
@@ -39,34 +45,26 @@ All passwords in credential files use **Windows Data Protection API (DPAPI)** en
 - Automatic protection against unauthorized access
 - Cannot be decrypted by anyone else, even with file access
 
-### Decrypting Passwords
+### Using DPAPI-Encrypted Passwords
 
-To decrypt a DPAPI-encrypted password when needed:
-
-```powershell
-# Decrypt password inline (for tool parameters)
-powershell -Command "Add-Type -AssemblyName System.Security; [Text.Encoding]::UTF8.GetString([Security.Cryptography.ProtectedData]::Unprotect([Convert]::FromBase64String('ENCRYPTED_STRING_WITHOUT_dpapi_PREFIX'), $null, 'CurrentUser'))"
-```
+**CRITICAL**: The `mcp__web-agent-mcp__login` and `mcp__web-agent-mcp__type` tools accept `dpapi:` encrypted passwords directly. **NEVER manually decrypt passwords** - always pass the full `dpapi:` string to the tools.
 
 **Example login workflow for any environment:**
 ```javascript
-// Method 1: Decrypt and use the login tool
-// First decrypt the password from the credential file using the PowerShell command above
-// Then use it directly in the login tool
-
+// Method 1: Use the login tool with dpapi: password directly
 await mcp__web-agent-mcp__login({
   usernameSelector: '#txtUserName',
   passwordSelector: '#txtPassword',
   username: 'bheard',
-  password: 'DECRYPTED_PASSWORD_HERE',  // Use the decrypted result
+  password: 'dpapi:AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAA...',  // Pass the full dpapi: string
   submitSelector: '#btnSignIn'
 });
 
-// Method 2: Decrypt and type into fields
+// Method 2: Type into fields with dpapi: password directly
 await mcp__web-agent-mcp__type({ selector: '#txtUserName', text: 'bheard' });
 await mcp__web-agent-mcp__type({
   selector: '#txtPassword',
-  text: 'DECRYPTED_PASSWORD_HERE'  // Use the decrypted result
+  text: 'dpapi:AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAA...'  // Pass the full dpapi: string
 });
 await mcp__web-agent-mcp__click({ selector: '#btnSignIn' });
 await mcp__web-agent-mcp__wait({ timeout: 5000 });
@@ -82,26 +80,44 @@ powershell -Command "Add-Type -AssemblyName System.Security; 'dpapi:' + [Convert
 ```
 
 ### Other Environments
-- **Production/Development**: Use credentials stored in `C:\Users\ben.heard\.config\tdx\prod-credentials.json` and `C:\Users\ben.heard\.config\tdx\dev-credentials.json`
+- **Production/Development**: Use credentials stored in `C:\Users\ben.heard\.config\tdx-mcp\prod-credentials.json` and `C:\Users\ben.heard\.config\tdx-mcp\dev-credentials.json`
 - **Credentials File Format**: All passwords use **DPAPI encryption** with `dpapi:` prefix
 - **Security Policy**: **NEVER output decoded passwords to screen or in tool results**
 - **NEVER mix environments**: CANARY credentials will NOT work on prod/dev and vice versa
 
-## TeamDynamix Development Codebase
+## TeamDynamix Development Codebases
 
-### Main Repository Location
-- **Path**: `C:\source\TDDev\enterprise`
-- This is the primary codebase for TeamDynamix development work
-- Contains information about the current branch being worked on
+There are two local development environments available:
 
-### Local Development Environment
-- **URL**: `http://localhost/TDDev/TDWorkManagement`
-- This is the local development environment for testing changes
-- **Credentials**: `C:\Users\ben.heard\.config\tdx\dev-credentials.json`
+### TDDev (Primary)
+- **Repository Path**: `C:\source\TDDev\enterprise`
+- **Base URL**: `http://localhost/TDDev/`
+- **Login Paths**:
+  - `/TDDev/TDNext` - Next-gen interface
+  - `/TDDev/TDClient` - Client interface
+  - `/TDDev/TDAdmin` - Admin interface
+  - `/TDDev/TDWorkManagement` - Work Management interface
+- **Credentials**: Stored in `C:\Users\ben.heard\.config\tdx-mcp\dev-credentials.json`
 
-## Console Log Capture
+### TDDM (Secondary)
+- **Repository Path**: `C:\source\TDDM\enterprise`
+- **Base URL**: `http://localhost/TDDM/`
+- **Login Paths**:
+  - `/TDDM/TDNext` - Next-gen interface
+  - `/TDDM/TDClient` - Client interface
+  - `/TDDM/TDAdmin` - Admin interface
+  - `/TDDM/TDWorkManagement` - Work Management interface
+- **Credentials**: Same as TDDev - stored in `C:\Users\ben.heard\.config\tdx-mcp\dev-credentials.json`
 
-The web-agent-mcp server now supports capturing browser console logs from JavaScript execution. This is particularly useful for debugging front-end code.
+### Login Process (Both Environments)
+Same as Canary - navigate to any path and use the login form with dev credentials:
+- Username field: `#txtUserName`
+- Password field: `#txtPassword`
+- Submit button: `#btnSignIn`
+
+## Console Tools
+
+The web-agent-mcp server supports both capturing and executing JavaScript in the browser console. This is particularly useful for debugging front-end code.
 
 ### get_console_logs Tool
 
@@ -132,6 +148,41 @@ await mcp__web-agent-mcp__get_console_logs({ filter: 'DatePicker' });
 - The buffer persists across page interactions until explicitly cleared or the browser session ends
 - Useful for debugging Vue components, event handlers, and other JavaScript code
 
+### execute_console Tool
+
+**Purpose**: Execute JavaScript code in the browser console and return the result.
+
+**Parameters**:
+- `code` (required, string): JavaScript code to execute in the browser context
+
+**Usage Example**:
+```javascript
+// Execute basic JavaScript
+await mcp__web-agent-mcp__execute_console({ code: '2 + 2' });
+
+// Query the DOM
+await mcp__web-agent-mcp__execute_console({
+  code: 'document.querySelector("h1").textContent'
+});
+
+// Execute complex code with console logging
+await mcp__web-agent-mcp__execute_console({
+  code: 'console.log("Debug info"); someFunction(); "done"'
+});
+
+// Manipulate the page
+await mcp__web-agent-mcp__execute_console({
+  code: 'document.body.style.backgroundColor = "red"; "Color changed"'
+});
+```
+
+**Notes**:
+- Code executes in the current page context with full access to the DOM and global scope
+- The last expression in the code is returned as the result
+- Do not use `return` statements (causes "Illegal return statement" error)
+- Console output from the executed code is captured and available via `get_console_logs`
+- Useful for debugging, testing, and dynamically manipulating pages
+
 ## Web Navigation Workflow
 
 ### Single Action Instructions
@@ -151,3 +202,56 @@ Examples of multi-step tasks:
 - "Log in to the application"
 - "Test the date picker tab navigation"
 - "Find a form with date fields and fill it out"
+
+## Screenshots
+
+### Screenshot Location
+- **Path**: `C:\source\MCP\web-agent-mcp\screenshots\`
+- All screenshots taken by the web-agent-mcp tools are saved in this directory
+- Screenshots are named with timestamps (e.g., `screenshot-2025-11-21T22-12-57-732Z.png`)
+- Custom filenames can be specified when taking screenshots
+- Use `mcp__web-agent-mcp__list_screenshots` to see all available screenshots
+
+## Testing
+
+### Running Tests
+
+The MCP server includes comprehensive automated tests for all tools. To run the test suite:
+
+```bash
+npm test
+```
+
+This will:
+1. Build the TypeScript source code
+2. Start the MCP server
+3. Run all tool tests via JSON-RPC
+4. Display results with pass/fail status
+
+### Test Coverage
+
+The test suite (`test-all-tools.mjs`) includes tests for:
+
+- **Meta Tests**: Tool listing and resource verification
+- **Navigation Tests**: URL navigation, page content retrieval, refresh
+- **Interaction Tests**: Element queries, scrolling, waiting for selectors
+- **Screenshot Tests**: Taking and listing screenshots
+- **Debugging Tests**: Console log capture, filtering, and clearing
+- **Console Execution Tests**: JavaScript execution, DOM queries, console log generation
+- **Cookie Tests**: Setting and retrieving cookies
+- **Keyboard Tests**: Key press simulation
+
+### Test Results
+
+A typical successful test run shows:
+- Total tests: 40+ tests
+- Pass rate: 100%
+- All tools verified as working correctly
+
+### Adding New Tests
+
+When adding new tools or features:
+1. Add the tool name to the `expectedTools` array in the Meta Tests section
+2. Create a new test function following the existing pattern
+3. Add the test function to `runAllTests()`
+4. Ensure the test covers both success and error cases

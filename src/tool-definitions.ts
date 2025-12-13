@@ -38,12 +38,12 @@ export const toolDefinitions: Tool[] = [
   },
   {
     name: 'type',
-    description: 'Type text into an input field',
+    description: 'Type text into an input field. Supports base64-encoded text with "base64:" prefix for passwords (e.g., "base64:UEBzc3dvcmQx"). The decoded value will not be visible in logs.',
     inputSchema: {
       type: 'object',
       properties: {
         selector: { type: 'string', description: 'CSS selector of the input field' },
-        text: { type: 'string', description: 'Text to type' },
+        text: { type: 'string', description: 'Text to type. Use "base64:" prefix for encoded passwords (e.g., "base64:UEBzc3dvcmQx")' },
         delay: { type: 'number', description: 'Delay between keystrokes in ms', default: 0 }
       },
       required: ['selector', 'text']
@@ -51,14 +51,18 @@ export const toolDefinitions: Tool[] = [
   },
   {
     name: 'login',
-    description: 'Perform login action with username and password',
+    description: 'Perform login action with username and password. Supports base64-encoded passwords with "base64:" prefix (e.g., "base64:UEBzc3dvcmQx"). The decoded value will not be visible in logs.',
     inputSchema: {
       type: 'object',
       properties: {
         usernameSelector: { type: 'string', description: 'CSS selector for username field' },
         passwordSelector: { type: 'string', description: 'CSS selector for password field' },
         username: { type: 'string', description: 'Username to enter' },
-        password: { type: 'string', description: 'Password to enter' },
+        password: {
+          type: 'string',
+          description: 'Password to enter. Use "base64:" prefix for encoded passwords (e.g., "base64:UEBzc3dvcmQx")',
+          format: 'password'
+        },
         submitSelector: { type: 'string', description: 'CSS selector for submit button' }
       },
       required: ['usernameSelector', 'passwordSelector', 'username', 'password', 'submitSelector']
@@ -252,6 +256,38 @@ export const toolDefinitions: Tool[] = [
         }
       },
       required: ['queries']
+    }
+  },
+  {
+    name: 'get_console_logs',
+    description: 'Get console messages from the browser. Useful for debugging JavaScript execution and viewing console.log output.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        clear: {
+          type: 'boolean',
+          description: 'Clear the console log buffer after reading',
+          default: false
+        },
+        filter: {
+          type: 'string',
+          description: 'Filter messages by type (log, warn, error, info, debug) or by text content'
+        }
+      }
+    }
+  },
+  {
+    name: 'execute_console',
+    description: 'Execute JavaScript code in the browser console and return the result. Useful for debugging, testing, and manipulating the page dynamically.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        code: {
+          type: 'string',
+          description: 'JavaScript code to execute in the browser context'
+        }
+      },
+      required: ['code']
     }
   }
 ];

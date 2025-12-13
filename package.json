@@ -2,24 +2,38 @@
   "name": "web-agent-mcp",
   "version": "1.0.0",
   "description": "MCP server with browser automation, screenshot, and parsing capabilities",
-  "main": "dist/index.js",
+  "main": "electron-main.cjs",
   "type": "module",
   "scripts": {
     "build": "tsc",
     "dev": "tsx src/index.ts",
     "start": "node dist/index.js",
-    "install-browsers": "npx playwright install chromium"
+    "install-browsers": "npx playwright install chromium",
+    "test": "npm run build && node test-all-tools.mjs",
+    "electron": "electron .",
+    "electron-dev": "electron . --dev",
+    "package": "electron-builder --win --x64"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.0.0",
+    "dotenv": "^16.3.1",
+    "openai": "^6.10.0",
+    "play-sound": "^1.1.6",
     "playwright": "^1.40.0",
     "sharp": "^0.33.0",
     "tesseract.js": "^5.0.0",
-    "dotenv": "^16.3.1"
+    "vosk-browser": "^0.0.8"
   },
   "devDependencies": {
     "@types/node": "^20.10.0",
+    "electron": "^39.2.6",
+    "electron-builder": "^26.0.12",
     "tsx": "^4.6.0",
     "typescript": "^5.3.0"
+  },
+  "optionalDependencies": {
+    "@google-cloud/speech": "^7.2.1",
+    "node-record-lpcm16": "^1.0.1",
+    "say": "^0.16.0"
   }
 }
