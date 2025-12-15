@@ -49,7 +49,7 @@ export interface ScreenshotArgs {
   selector?: string;
   filename?: string;
   directory?: string;
-  thumbnail?: boolean;
+  fullResolution?: boolean;
   autoOcr?: boolean;
 }
 

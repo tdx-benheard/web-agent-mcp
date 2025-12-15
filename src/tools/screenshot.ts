@@ -139,36 +139,66 @@ export async function handleScreenshot(args: ScreenshotArgs): Promise<ToolResult
 
   const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
   const filename = args.filename || `screenshot-${timestamp}.png`;
-  const filepath = path.join(targetDir, filename);
-  const { fullPage = false, selector, thumbnail = true, autoOcr = false } = args;
+  const { fullPage = false, selector, fullResolution = false, autoOcr = false } = args;
 
-  // Take screenshot
+  // Generate temporary path for full screenshot (we always need to capture full first, then resize)
+  const tempFullPath = path.join(targetDir, `temp-${filename}`);
+
+  // Take full screenshot to temporary location
   if (selector) {
     const element = await page.$(selector);
     if (element) {
-      await element.screenshot({ path: filepath });
+      await element.screenshot({ path: tempFullPath });
     } else {
       throw new Error(`Element not found: ${selector}`);
     }
   } else {
     await page.screenshot({
-      path: filepath,
+      path: tempFullPath,
       fullPage
     });
   }
 
-  let resultText = `Screenshot saved to: ${filepath}`;
+  let resultText = '';
   let thumbnailPath: string | undefined;
+  let fullResPath: string | undefined;
   let ocrText: string | undefined;
 
-  // Generate thumbnail if requested
-  if (thumbnail) {
+  // Always create thumbnail (default behavior)
+  try {
+    const ext = path.extname(filename);
+    const baseName = filename.replace(ext, '');
+    thumbnailPath = path.join(targetDir, `${baseName}-thumb${ext}`);
+
+    await sharp(tempFullPath)
+      .resize(THUMBNAIL_WIDTH, null, {
+        fit: 'inside',
+        withoutEnlargement: true
+      })
+      .toFile(thumbnailPath);
+
+    resultText = `Screenshot saved to: ${thumbnailPath}`;
+  } catch (error) {
+    console.error('Error creating thumbnail:', error);
+    throw new Error('Failed to create thumbnail screenshot');
+  }
+
+  // Save full resolution if requested
+  if (fullResolution) {
     try {
-      thumbnailPath = await createThumbnail(filepath);
-      resultText += `\nThumbnail saved to: ${thumbnailPath}`;
+      fullResPath = path.join(targetDir, filename);
+      await fs.rename(tempFullPath, fullResPath);
+      resultText += `\nFull resolution saved to: ${fullResPath}`;
     } catch (error) {
-      console.error('Error creating thumbnail:', error);
-      resultText += '\nFailed to create thumbnail';
+      console.error('Error saving full resolution:', error);
+      resultText += '\nFailed to save full resolution';
+    }
+  } else {
+    // Delete temp full screenshot if not needed
+    try {
+      await fs.unlink(tempFullPath);
+    } catch (error) {
+      console.error('Error deleting temp screenshot:', error);
     }
   }
 
@@ -176,7 +206,7 @@ export async function handleScreenshot(args: ScreenshotArgs): Promise<ToolResult
   if (autoOcr) {
     try {
       const worker = await initOCR();
-      const targetPath = thumbnailPath || filepath;
+      const targetPath = thumbnailPath;
       const { data: { text } } = await worker.recognize(targetPath);
       ocrText = text;
       resultText += `\n\nExtracted text:\n${text}`;

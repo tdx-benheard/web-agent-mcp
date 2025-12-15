@@ -11,56 +11,69 @@ When committing changes to this repository, always push to GitHub automatically 
 **IMPORTANT**: Follow these guidelines when taking screenshots to minimize context token usage:
 
 #### Default Behavior (Automatic)
-- Screenshots automatically generate 400px thumbnails (saves ~80% context tokens)
-- Thumbnails are created by default - you don't need to specify `thumbnail: true`
-- Only disable thumbnails (`thumbnail: false`) when full resolution is absolutely required
+- Screenshots save ONLY 400px thumbnails by default (saves ~80% context tokens)
+- Full resolution images are NOT saved unless you specify `fullResolution: true`
+- Thumbnail filename ends with `-thumb.png`
 
 #### When to Use Each Feature
 
-**Use `autoOcr: true` when:**
+**Default: Just take the screenshot** (thumbnail only, most common)
+- Use for: Visual verification, checking layouts, confirming page state
+- Example: `screenshot({ filename: 'page.png' })`
+- Result: Saves `page-thumb.png` (400px wide)
+- **This is what you should do 90% of the time**
+
+**Use `autoOcr: true` when you need text:**
 - You need to read text from a page (error messages, labels, content)
 - Visual layout doesn't matter, only the text content
 - You want to avoid viewing the image at all
 - Example: `screenshot({ filename: 'error.png', autoOcr: true })`
+- Result: Returns extracted text + saves thumbnail
 
-**View thumbnails instead of full screenshots when:**
-- You need visual confirmation but don't need fine details
-- Checking page layout, element positioning, or general appearance
-- The thumbnail filename ends with `-thumb.png`
-- Use Read tool on the thumbnail file, not the full screenshot
-
-**Only view full screenshots when:**
+**Use `fullResolution: true` ONLY when:**
 - Fine visual details are critical (design review, pixel-perfect verification)
 - Thumbnail resolution (400px) is insufficient for the task
 - User explicitly requests full resolution
+- Example: `screenshot({ filename: 'detailed.png', fullResolution: true })`
+- Result: Saves both `detailed-thumb.png` AND `detailed.png`
+- **Rarely needed - ask yourself if you really need this**
 
 #### Workflow Example
 
 ```javascript
-// 1. Take screenshot with auto-OCR to get text (no viewing needed)
-await screenshot({ filename: 'login-page.png', autoOcr: true });
-// Returns: Screenshot path + extracted text
+// MOST COMMON: Just take screenshot (thumbnail only)
+await screenshot({ filename: 'login-page.png' });
+// Saves: login-page-thumb.png (400px, context-efficient)
 
-// 2. If visual verification needed, read the THUMBNAIL (not full image)
-await Read('path/to/login-page-thumb.png');  // Much smaller, saves context
+// If you need the text, use autoOcr
+await screenshot({ filename: 'error.png', autoOcr: true });
+// Returns: Extracted text + saves error-thumb.png
 
-// 3. Only read full screenshot if absolutely necessary
-await Read('path/to/login-page.png');  // Last resort, uses lots of context
+// RARE: Only if you absolutely need full resolution
+await screenshot({ filename: 'design.png', fullResolution: true });
+// Saves: design-thumb.png AND design.png
 ```
 
 #### What NOT to Do
 
-❌ **Don't automatically view screenshots after taking them**
+❌ **Don't request full resolution unnecessarily**
 ```javascript
-await screenshot({ filename: 'page.png' });
-await Read('path/to/page.png');  // Wastes context - use thumbnail or OCR!
+await screenshot({ filename: 'page.png', fullResolution: true });  // WHY?
 ```
 
-✅ **Do use context-efficient alternatives**
+❌ **Don't view images if you just need text**
 ```javascript
-await screenshot({ filename: 'page.png', autoOcr: true });  // Get text
-// OR
-await Read('path/to/page-thumb.png');  // View small version
+await screenshot({ filename: 'error.png' });
+await Read('path/to/error-thumb.png');  // Should have used autoOcr!
+```
+
+✅ **Do use the simplest approach**
+```javascript
+// Default: Just take it
+await screenshot({ filename: 'page.png' });
+
+// Need text? Use autoOcr
+await screenshot({ filename: 'error.png', autoOcr: true });
 ```
 
 ## TeamDynamix Login
@@ -281,12 +294,12 @@ Examples of multi-step tasks:
 
 ### Context-Efficient Screenshot Features
 
-**Thumbnail Generation** (Saves Context Tokens) - **ENABLED BY DEFAULT**
-- **Parameter**: `thumbnail` (optional, boolean, default: **true**)
-- Automatically generates a 400px wide thumbnail alongside the full screenshot
+**Thumbnail-Only by Default** (Saves Context Tokens & Disk Space)
+- Screenshots save **ONLY** 400px thumbnails by default
+- No full resolution image is saved unless explicitly requested
 - Thumbnail filename: `screenshot-name-thumb.png`
-- **Benefit**: View thumbnails instead of full images to save ~80% context tokens
-- Set to `false` only when full resolution is absolutely required
+- **Benefit**: Saves ~80% context tokens AND disk space
+- Use `fullResolution: true` only when full details are absolutely required
 
 **Auto-OCR Text Extraction** (Extract Text Without Viewing)
 - **Parameter**: `autoOcr` (optional, boolean, default: false)
@@ -305,40 +318,41 @@ Examples of multi-step tasks:
 
 ### Screenshot Usage Examples
 
-**Example 1 - Basic screenshot:**
+**Example 1 - Basic screenshot (thumbnail only, default):**
 ```javascript
 await mcp__web-agent-mcp__screenshot({
   filename: 'login-page.png'
 });
+// Saves: login-page-thumb.png (400px wide)
 ```
 
-**Example 2 - Thumbnail for context efficiency:**
-```javascript
-await mcp__web-agent-mcp__screenshot({
-  filename: 'dashboard.png',
-  thumbnail: true  // Creates 400px thumbnail
-});
-```
-
-**Example 3 - Auto-OCR to extract text without viewing:**
+**Example 2 - Extract text with OCR:**
 ```javascript
 await mcp__web-agent-mcp__screenshot({
   filename: 'error-message.png',
-  thumbnail: true,
-  autoOcr: true  // Extracts text from thumbnail
+  autoOcr: true
 });
 // Returns: Screenshot path + extracted text
+// Saves: error-message-thumb.png
 ```
 
-**Example 4 - Full-page screenshot with all features:**
+**Example 3 - Full resolution (rarely needed):**
+```javascript
+await mcp__web-agent-mcp__screenshot({
+  filename: 'design-review.png',
+  fullResolution: true
+});
+// Saves: design-review-thumb.png AND design-review.png
+```
+
+**Example 4 - Full-page screenshot with custom directory:**
 ```javascript
 await mcp__web-agent-mcp__screenshot({
   filename: 'full-page.png',
   fullPage: true,
-  thumbnail: true,
-  autoOcr: true,
   directory: 'E:\\MyProject\\screenshots'
 });
+// Saves: E:\MyProject\screenshots\full-page-thumb.png
 ```
 
 ## Testing
