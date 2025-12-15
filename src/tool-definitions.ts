@@ -56,14 +56,16 @@ export const toolDefinitions: Tool[] = [
   },
   {
     name: 'screenshot',
-    description: 'Capture screenshot',
+    description: 'Capture screenshot with optional thumbnail/OCR. Auto-deletes screenshots older than 30 days, keeps 10 most recent.',
     inputSchema: {
       type: 'object',
       properties: {
         fullPage: { type: 'boolean', default: false },
         selector: { type: 'string' },
         filename: { type: 'string' },
-        directory: { type: 'string' }
+        directory: { type: 'string' },
+        thumbnail: { type: 'boolean', default: false, description: 'Generate 400px thumbnail (saves context)' },
+        autoOcr: { type: 'boolean', default: false, description: 'Automatically extract text via OCR' }
       }
     }
   },

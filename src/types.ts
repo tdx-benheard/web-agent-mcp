@@ -49,6 +49,8 @@ export interface ScreenshotArgs {
   selector?: string;
   filename?: string;
   directory?: string;
+  thumbnail?: boolean;
+  autoOcr?: boolean;
 }
 
 export interface ParseScreenshotArgs {

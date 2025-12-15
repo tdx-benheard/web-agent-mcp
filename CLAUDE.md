@@ -220,18 +220,65 @@ Examples of multi-step tasks:
 - The directory will be created automatically if it doesn't exist
 - Useful when working with MCP from a different project and wanting screenshots in that project's directory
 
-**Example - Save to custom directory:**
+### Context-Efficient Screenshot Features
+
+**Thumbnail Generation** (Saves Context Tokens)
+- **Parameter**: `thumbnail` (optional, boolean, default: false)
+- Generates a 400px wide thumbnail alongside the full screenshot
+- Thumbnail filename: `screenshot-name-thumb.png`
+- **Benefit**: View thumbnails instead of full images to save significant context tokens
+- Useful for quick visual verification without loading large images
+
+**Auto-OCR Text Extraction** (Extract Text Without Viewing)
+- **Parameter**: `autoOcr` (optional, boolean, default: false)
+- Automatically extracts text from screenshot using OCR
+- OCR runs on thumbnail if generated, otherwise on full screenshot
+- **Benefit**: Get text content without viewing the image, saving context tokens
+- Returns extracted text in the tool response
+
+**Automatic Cleanup** (Prevents Accumulation)
+- Runs automatically after each screenshot
+- **Strategy**: Hybrid time + count based
+  - Deletes screenshots older than 30 days
+  - Always keeps the 10 most recent screenshots
+- Deletes both full screenshots and their thumbnails
+- **Benefit**: Prevents screenshot directory from growing indefinitely
+
+### Screenshot Usage Examples
+
+**Example 1 - Basic screenshot:**
 ```javascript
 await mcp__web-agent-mcp__screenshot({
-  directory: 'E:\\MyProject\\screenshots',
   filename: 'login-page.png'
 });
 ```
 
-**Example - Use default directory:**
+**Example 2 - Thumbnail for context efficiency:**
 ```javascript
 await mcp__web-agent-mcp__screenshot({
-  filename: 'login-page.png'
+  filename: 'dashboard.png',
+  thumbnail: true  // Creates 400px thumbnail
+});
+```
+
+**Example 3 - Auto-OCR to extract text without viewing:**
+```javascript
+await mcp__web-agent-mcp__screenshot({
+  filename: 'error-message.png',
+  thumbnail: true,
+  autoOcr: true  // Extracts text from thumbnail
+});
+// Returns: Screenshot path + extracted text
+```
+
+**Example 4 - Full-page screenshot with all features:**
+```javascript
+await mcp__web-agent-mcp__screenshot({
+  filename: 'full-page.png',
+  fullPage: true,
+  thumbnail: true,
+  autoOcr: true,
+  directory: 'E:\\MyProject\\screenshots'
 });
 ```
 
