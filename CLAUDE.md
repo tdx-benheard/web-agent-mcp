@@ -198,26 +198,32 @@ The web-agent-mcp server supports both capturing and executing JavaScript in the
 **Parameters**:
 - `clear` (optional, boolean): Clear the console log buffer after reading (default: false)
 - `filter` (optional, string): Filter messages by type (log, warn, error, info, debug) or by text content
+- `limit` (optional, number): Max messages to return (default: 50, use 0 for all)
 
 **Usage Example**:
 ```javascript
-// Get all console logs
+// Get last 50 console logs (default, saves context)
 await mcp__web-agent-mcp__get_console_logs({});
 
-// Get only error messages
+// Get only error messages (last 50 errors)
 await mcp__web-agent-mcp__get_console_logs({ filter: 'error' });
 
-// Get logs and clear the buffer
-await mcp__web-agent-mcp__get_console_logs({ clear: true });
+// Get last 10 messages only
+await mcp__web-agent-mcp__get_console_logs({ limit: 10 });
+
+// Get ALL logs (use sparingly, can be huge)
+await mcp__web-agent-mcp__get_console_logs({ limit: 0 });
 
 // Search for specific text in logs
-await mcp__web-agent-mcp__get_console_logs({ filter: 'DatePicker' });
+await mcp__web-agent-mcp__get_console_logs({ filter: 'DatePicker', limit: 20 });
 ```
 
 **Notes**:
+- **Default returns only 50 most recent messages to save context**
 - Console messages are captured automatically from the moment the page loads
 - Messages include timestamp, type (log/warn/error/info/debug), text content, and source location
 - The buffer persists across page interactions until explicitly cleared or the browser session ends
+- Use `limit` parameter to control context usage (lower = less context)
 - Useful for debugging Vue components, event handlers, and other JavaScript code
 
 ### execute_console Tool

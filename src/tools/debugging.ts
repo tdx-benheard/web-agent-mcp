@@ -4,9 +4,10 @@ import { ToolResult } from '../types.js';
 /**
  * Get console messages from the browser
  */
-export async function handleGetConsoleLogs(args: { clear?: boolean; filter?: string }): Promise<ToolResult> {
+export async function handleGetConsoleLogs(args: { clear?: boolean; filter?: string; limit?: number }): Promise<ToolResult> {
   const clear = args.clear ?? false;
   const filter = args.filter?.toLowerCase();
+  const limit = args.limit ?? 50; // Default to 50 most recent messages
 
   let messages = getConsoleMessages(clear);
 
@@ -26,17 +27,27 @@ export async function handleGetConsoleLogs(args: { clear?: boolean; filter?: str
     };
   }
 
+  const totalMessages = messages.length;
+
+  // Limit to most recent N messages
+  if (limit > 0 && messages.length > limit) {
+    messages = messages.slice(-limit); // Get last N messages
+  }
+
   // Format messages for display
   const formattedMessages = messages.map((msg, index) => {
     const time = new Date(msg.timestamp).toISOString();
     const location = msg.location ? ` (${msg.location})` : '';
-    return `[${index + 1}] [${time}] [${msg.type}]${location}: ${msg.text}`;
+    const actualIndex = totalMessages > limit ? totalMessages - limit + index + 1 : index + 1;
+    return `[${actualIndex}] [${time}] [${msg.type}]${location}: ${msg.text}`;
   }).join('\n\n');
+
+  const limitText = totalMessages > limit ? ` (showing last ${limit} of ${totalMessages})` : '';
 
   return {
     content: [{
       type: 'text',
-      text: `Console messages (${messages.length}):\n\n${formattedMessages}`
+      text: `Console messages${limitText}:\n\n${formattedMessages}`
     }]
   };
 }

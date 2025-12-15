@@ -196,12 +196,13 @@ export const toolDefinitions: Tool[] = [
   },
   {
     name: 'get_console_logs',
-    description: 'Get browser console messages',
+    description: 'Get browser console messages (default: 50 most recent). Use limit to control count.',
     inputSchema: {
       type: 'object',
       properties: {
         clear: { type: 'boolean', default: false },
-        filter: { type: 'string' }
+        filter: { type: 'string' },
+        limit: { type: 'number', default: 50, description: 'Max messages to return (default: 50, use 0 for all)' }
       }
     }
   },
