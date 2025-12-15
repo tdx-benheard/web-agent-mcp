@@ -24,11 +24,20 @@ export async function ensureScreenshotDir(): Promise<void> {
 
 export async function handleScreenshot(args: ScreenshotArgs): Promise<ToolResult> {
   const page = await initBrowser();
-  await ensureScreenshotDir();
+
+  // Use custom directory if provided (absolute path), otherwise use default
+  const targetDir = args.directory || SCREENSHOT_DIR;
+
+  // Ensure the target directory exists
+  try {
+    await fs.mkdir(targetDir, { recursive: true });
+  } catch (error) {
+    console.error('Error creating screenshot directory:', error);
+  }
 
   const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
   const filename = args.filename || `screenshot-${timestamp}.png`;
-  const filepath = path.join(SCREENSHOT_DIR, filename);
+  const filepath = path.join(targetDir, filename);
   const { fullPage = false, selector } = args;
 
   if (selector) {
@@ -48,7 +57,7 @@ export async function handleScreenshot(args: ScreenshotArgs): Promise<ToolResult
   return {
     content: [{
       type: 'text',
-      text: `Screenshot saved as ${filename}`
+      text: `Screenshot saved to: ${filepath}`
     }]
   };
 }
@@ -84,8 +93,8 @@ export async function handleListScreenshots(): Promise<ToolResult> {
     content: [{
       type: 'text',
       text: imageFiles.length > 0
-        ? `Screenshots:\n${imageFiles.join('\n')}`
-        : 'No screenshots found'
+        ? `Screenshots in ${SCREENSHOT_DIR}:\n${imageFiles.join('\n')}`
+        : `No screenshots found in ${SCREENSHOT_DIR}`
     }]
   };
 }

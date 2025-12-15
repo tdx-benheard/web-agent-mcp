@@ -3,253 +3,187 @@ import { Tool } from '@modelcontextprotocol/sdk/types.js';
 export const toolDefinitions: Tool[] = [
   {
     name: 'navigate',
-    description: 'Navigate to a URL',
+    description: 'Go to URL',
     inputSchema: {
       type: 'object',
       properties: {
-        url: { type: 'string', description: 'The URL to navigate to' },
-        waitUntil: {
-          type: 'string',
-          description: 'When to consider navigation complete',
-          enum: ['load', 'domcontentloaded', 'networkidle'],
-          default: 'load'
-        }
+        url: { type: 'string' },
+        waitUntil: { type: 'string', enum: ['load', 'domcontentloaded', 'networkidle'], default: 'load' }
       },
       required: ['url']
     }
   },
   {
     name: 'click',
-    description: 'Click on an element',
+    description: 'Click element',
     inputSchema: {
       type: 'object',
       properties: {
-        selector: { type: 'string', description: 'CSS selector or text to click' },
-        clickCount: { type: 'number', description: 'Number of clicks', default: 1 },
-        button: {
-          type: 'string',
-          description: 'Mouse button to use',
-          enum: ['left', 'right', 'middle'],
-          default: 'left'
-        }
+        selector: { type: 'string' },
+        clickCount: { type: 'number', default: 1 },
+        button: { type: 'string', enum: ['left', 'right', 'middle'], default: 'left' }
       },
       required: ['selector']
     }
   },
   {
     name: 'type',
-    description: 'Type text into an input field. Supports base64-encoded text with "base64:" prefix for passwords (e.g., "base64:UEBzc3dvcmQx"). The decoded value will not be visible in logs.',
+    description: 'Type into input. Supports base64:/dpapi: prefix for encoded passwords.',
     inputSchema: {
       type: 'object',
       properties: {
-        selector: { type: 'string', description: 'CSS selector of the input field' },
-        text: { type: 'string', description: 'Text to type. Use "base64:" prefix for encoded passwords (e.g., "base64:UEBzc3dvcmQx")' },
-        delay: { type: 'number', description: 'Delay between keystrokes in ms', default: 0 }
+        selector: { type: 'string' },
+        text: { type: 'string' },
+        delay: { type: 'number', default: 0 }
       },
       required: ['selector', 'text']
     }
   },
   {
     name: 'login',
-    description: 'Perform login action with username and password. Supports base64-encoded passwords with "base64:" prefix (e.g., "base64:UEBzc3dvcmQx"). The decoded value will not be visible in logs.',
+    description: 'Login with credentials. Supports base64:/dpapi: prefix for encoded passwords.',
     inputSchema: {
       type: 'object',
       properties: {
-        usernameSelector: { type: 'string', description: 'CSS selector for username field' },
-        passwordSelector: { type: 'string', description: 'CSS selector for password field' },
-        username: { type: 'string', description: 'Username to enter' },
-        password: {
-          type: 'string',
-          description: 'Password to enter. Use "base64:" prefix for encoded passwords (e.g., "base64:UEBzc3dvcmQx")',
-          format: 'password'
-        },
-        submitSelector: { type: 'string', description: 'CSS selector for submit button' }
+        usernameSelector: { type: 'string' },
+        passwordSelector: { type: 'string' },
+        username: { type: 'string' },
+        password: { type: 'string', format: 'password' },
+        submitSelector: { type: 'string' }
       },
       required: ['usernameSelector', 'passwordSelector', 'username', 'password', 'submitSelector']
     }
   },
   {
     name: 'screenshot',
-    description: 'Take a screenshot of the current page',
+    description: 'Capture screenshot',
     inputSchema: {
       type: 'object',
       properties: {
-        fullPage: { type: 'boolean', description: 'Capture full page', default: false },
-        selector: { type: 'string', description: 'CSS selector to capture specific element' },
-        filename: { type: 'string', description: 'Custom filename for screenshot' }
+        fullPage: { type: 'boolean', default: false },
+        selector: { type: 'string' },
+        filename: { type: 'string' },
+        directory: { type: 'string' }
       }
     }
   },
   {
     name: 'parse_screenshot',
-    description: 'Parse text from a screenshot using OCR',
+    description: 'OCR text from screenshot',
     inputSchema: {
       type: 'object',
       properties: {
-        filename: { type: 'string', description: 'Screenshot filename to parse' },
-        language: { type: 'string', description: 'OCR language', default: 'eng' }
+        filename: { type: 'string' },
+        language: { type: 'string', default: 'eng' }
       },
       required: ['filename']
     }
   },
   {
     name: 'get_page_content',
-    description: 'Get the current page content (HTML or text)',
+    description: 'Get page HTML or text',
     inputSchema: {
       type: 'object',
       properties: {
-        format: {
-          type: 'string',
-          description: 'Content format',
-          enum: ['html', 'text'],
-          default: 'text'
-        }
+        format: { type: 'string', enum: ['html', 'text'], default: 'text' }
       }
     }
   },
   {
     name: 'wait',
-    description: 'Wait for a condition or selector',
+    description: 'Wait for selector/condition',
     inputSchema: {
       type: 'object',
       properties: {
-        selector: { type: 'string', description: 'CSS selector to wait for' },
-        timeout: { type: 'number', description: 'Timeout in milliseconds', default: 14000 },
-        state: {
-          type: 'string',
-          description: 'State to wait for',
-          enum: ['attached', 'detached', 'visible', 'hidden'],
-          default: 'visible'
-        }
+        selector: { type: 'string' },
+        timeout: { type: 'number', default: 14000 },
+        state: { type: 'string', enum: ['attached', 'detached', 'visible', 'hidden'], default: 'visible' }
       }
     }
   },
   {
     name: 'scroll',
-    description: 'Scroll the page',
+    description: 'Scroll page',
     inputSchema: {
       type: 'object',
       properties: {
-        direction: {
-          type: 'string',
-          description: 'Scroll direction',
-          enum: ['up', 'down', 'left', 'right'],
-          default: 'down'
-        },
-        amount: { type: 'number', description: 'Amount to scroll in pixels', default: 500 }
+        direction: { type: 'string', enum: ['up', 'down', 'left', 'right'], default: 'down' },
+        amount: { type: 'number', default: 500 }
       }
     }
   },
   {
     name: 'go_back',
-    description: 'Navigate back in browser history',
-    inputSchema: {
-      type: 'object',
-      properties: {}
-    }
+    description: 'Browser back',
+    inputSchema: { type: 'object', properties: {} }
   },
   {
     name: 'go_forward',
-    description: 'Navigate forward in browser history',
-    inputSchema: {
-      type: 'object',
-      properties: {}
-    }
+    description: 'Browser forward',
+    inputSchema: { type: 'object', properties: {} }
   },
   {
     name: 'refresh',
-    description: 'Refresh the current page',
-    inputSchema: {
-      type: 'object',
-      properties: {}
-    }
+    description: 'Reload page',
+    inputSchema: { type: 'object', properties: {} }
   },
   {
     name: 'get_cookies',
-    description: 'Get browser cookies',
+    description: 'Get cookies',
     inputSchema: {
       type: 'object',
       properties: {
-        urls: { type: 'array', items: { type: 'string' }, description: 'Filter cookies by URLs' }
+        urls: { type: 'array', items: { type: 'string' } }
       }
     }
   },
   {
     name: 'set_cookie',
-    description: 'Set a browser cookie',
+    description: 'Set cookie',
     inputSchema: {
       type: 'object',
       properties: {
-        name: { type: 'string', description: 'Cookie name' },
-        value: { type: 'string', description: 'Cookie value' },
-        domain: { type: 'string', description: 'Cookie domain' },
-        path: { type: 'string', description: 'Cookie path', default: '/' }
+        name: { type: 'string' },
+        value: { type: 'string' },
+        domain: { type: 'string' },
+        path: { type: 'string', default: '/' }
       },
       required: ['name', 'value']
     }
   },
   {
     name: 'list_screenshots',
-    description: 'List all saved screenshots',
-    inputSchema: {
-      type: 'object',
-      properties: {}
-    }
+    description: 'List screenshots',
+    inputSchema: { type: 'object', properties: {} }
   },
   {
     name: 'press_key',
-    description: 'Press a keyboard key or key combination',
+    description: 'Press key (Enter, Tab, Control+C, etc)',
     inputSchema: {
       type: 'object',
       properties: {
-        key: {
-          type: 'string',
-          description: 'Key to press (e.g., "Enter", "Tab", "ArrowDown", "a", "Control+C"). Supports modifiers: Control/Shift/Alt/Meta'
-        },
-        delay: {
-          type: 'number',
-          description: 'Delay in ms before pressing the key',
-          default: 0
-        }
+        key: { type: 'string' },
+        delay: { type: 'number', default: 0 }
       },
       required: ['key']
     }
   },
   {
     name: 'query_page',
-    description: 'Extract specific DOM element content efficiently using CSS selectors. Returns only the requested data, using significantly fewer tokens than get_page_content.',
+    description: 'Extract DOM elements by CSS selector',
     inputSchema: {
       type: 'object',
       properties: {
         queries: {
           type: 'array',
-          description: 'Array of queries to extract from the page',
           items: {
             type: 'object',
             properties: {
-              name: {
-                type: 'string',
-                description: 'Name for this query result (used as key in returned object)'
-              },
-              selector: {
-                type: 'string',
-                description: 'CSS selector to target the element(s)'
-              },
-              extract: {
-                type: 'string',
-                description: 'What to extract from the element',
-                enum: ['text', 'innerText', 'html', 'outerHTML'],
-                default: 'text'
-              },
-              index: {
-                type: 'number',
-                description: 'Which element to select if multiple match (0-based, -1 for last). Ignored if all is true.'
-              },
-              all: {
-                type: 'boolean',
-                description: 'If true, returns an array of all matching elements. If false or not provided, returns single element based on index.',
-                default: false
-              }
+              name: { type: 'string' },
+              selector: { type: 'string' },
+              extract: { type: 'string', enum: ['text', 'innerText', 'html', 'outerHTML'], default: 'text' },
+              index: { type: 'number' },
+              all: { type: 'boolean', default: false }
             },
             required: ['name', 'selector']
           }
@@ -260,32 +194,22 @@ export const toolDefinitions: Tool[] = [
   },
   {
     name: 'get_console_logs',
-    description: 'Get console messages from the browser. Useful for debugging JavaScript execution and viewing console.log output.',
+    description: 'Get browser console messages',
     inputSchema: {
       type: 'object',
       properties: {
-        clear: {
-          type: 'boolean',
-          description: 'Clear the console log buffer after reading',
-          default: false
-        },
-        filter: {
-          type: 'string',
-          description: 'Filter messages by type (log, warn, error, info, debug) or by text content'
-        }
+        clear: { type: 'boolean', default: false },
+        filter: { type: 'string' }
       }
     }
   },
   {
     name: 'execute_console',
-    description: 'Execute JavaScript code in the browser console and return the result. Useful for debugging, testing, and manipulating the page dynamically.',
+    description: 'Run JS in browser console',
     inputSchema: {
       type: 'object',
       properties: {
-        code: {
-          type: 'string',
-          description: 'JavaScript code to execute in the browser context'
-        }
+        code: { type: 'string' }
       },
       required: ['code']
     }

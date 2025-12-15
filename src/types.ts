@@ -48,6 +48,7 @@ export interface ScreenshotArgs {
   fullPage?: boolean;
   selector?: string;
   filename?: string;
+  directory?: string;
 }
 
 export interface ParseScreenshotArgs {

@@ -206,11 +206,34 @@ Examples of multi-step tasks:
 ## Screenshots
 
 ### Screenshot Location
-- **Path**: `C:\source\MCP\web-agent-mcp\screenshots\`
-- All screenshots taken by the web-agent-mcp tools are saved in this directory
+- **Default Path**: `./screenshots/` (relative to MCP server installation directory)
+- By default, screenshots are saved to the `screenshots/` directory within the web-agent-mcp installation
 - Screenshots are named with timestamps (e.g., `screenshot-2025-11-21T22-12-57-732Z.png`)
 - Custom filenames can be specified when taking screenshots
-- Use `mcp__web-agent-mcp__list_screenshots` to see all available screenshots
+- The tool always displays the full absolute path when a screenshot is taken
+- Use `mcp__web-agent-mcp__list_screenshots` to see all available screenshots and their location
+- Screenshots are automatically excluded from git (configured in `.gitignore`)
+
+### Custom Screenshot Directory
+- **Parameter**: `directory` (optional, string) - Absolute path to save screenshots
+- When specified, screenshots will be saved to the custom directory instead of the default location
+- The directory will be created automatically if it doesn't exist
+- Useful when working with MCP from a different project and wanting screenshots in that project's directory
+
+**Example - Save to custom directory:**
+```javascript
+await mcp__web-agent-mcp__screenshot({
+  directory: 'E:\\MyProject\\screenshots',
+  filename: 'login-page.png'
+});
+```
+
+**Example - Use default directory:**
+```javascript
+await mcp__web-agent-mcp__screenshot({
+  filename: 'login-page.png'
+});
+```
 
 ## Testing
 
