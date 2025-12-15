@@ -239,7 +239,7 @@ Examples of multi-step tasks:
 **Automatic Cleanup** (Prevents Accumulation)
 - Runs automatically after each screenshot
 - **Strategy**: Hybrid time + count based
-  - Deletes screenshots older than 30 days
+  - Deletes screenshots older than 7 days
   - Always keeps the 10 most recent screenshots
 - Deletes both full screenshots and their thumbnails
 - **Benefit**: Prevents screenshot directory from growing indefinitely

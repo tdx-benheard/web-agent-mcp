@@ -56,7 +56,7 @@ export const toolDefinitions: Tool[] = [
   },
   {
     name: 'screenshot',
-    description: 'Capture screenshot with optional thumbnail/OCR. Auto-deletes screenshots older than 30 days, keeps 10 most recent.',
+    description: 'Capture screenshot with optional thumbnail/OCR. Auto-deletes screenshots older than 7 days, keeps 10 most recent.',
     inputSchema: {
       type: 'object',
       properties: {

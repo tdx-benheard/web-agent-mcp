@@ -13,7 +13,7 @@ const __dirname = dirname(__filename);
 const SCREENSHOT_DIR = path.join(__dirname, '..', '..', 'screenshots');
 
 // Cleanup configuration
-const MAX_SCREENSHOT_AGE_DAYS = 30; // Delete screenshots older than 30 days
+const MAX_SCREENSHOT_AGE_DAYS = 7; // Delete screenshots older than 7 days
 const MIN_SCREENSHOTS_TO_KEEP = 10; // Always keep at least this many recent screenshots
 const THUMBNAIL_WIDTH = 400; // Thumbnail width in pixels
 
