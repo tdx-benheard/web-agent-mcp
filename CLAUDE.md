@@ -4,6 +4,65 @@
 
 When committing changes to this repository, always push to GitHub automatically after the commit succeeds.
 
+## AI Assistant Usage Guidelines
+
+### Context-Efficient Screenshot Practices
+
+**IMPORTANT**: Follow these guidelines when taking screenshots to minimize context token usage:
+
+#### Default Behavior (Automatic)
+- Screenshots automatically generate 400px thumbnails (saves ~80% context tokens)
+- Thumbnails are created by default - you don't need to specify `thumbnail: true`
+- Only disable thumbnails (`thumbnail: false`) when full resolution is absolutely required
+
+#### When to Use Each Feature
+
+**Use `autoOcr: true` when:**
+- You need to read text from a page (error messages, labels, content)
+- Visual layout doesn't matter, only the text content
+- You want to avoid viewing the image at all
+- Example: `screenshot({ filename: 'error.png', autoOcr: true })`
+
+**View thumbnails instead of full screenshots when:**
+- You need visual confirmation but don't need fine details
+- Checking page layout, element positioning, or general appearance
+- The thumbnail filename ends with `-thumb.png`
+- Use Read tool on the thumbnail file, not the full screenshot
+
+**Only view full screenshots when:**
+- Fine visual details are critical (design review, pixel-perfect verification)
+- Thumbnail resolution (400px) is insufficient for the task
+- User explicitly requests full resolution
+
+#### Workflow Example
+
+```javascript
+// 1. Take screenshot with auto-OCR to get text (no viewing needed)
+await screenshot({ filename: 'login-page.png', autoOcr: true });
+// Returns: Screenshot path + extracted text
+
+// 2. If visual verification needed, read the THUMBNAIL (not full image)
+await Read('path/to/login-page-thumb.png');  // Much smaller, saves context
+
+// 3. Only read full screenshot if absolutely necessary
+await Read('path/to/login-page.png');  // Last resort, uses lots of context
+```
+
+#### What NOT to Do
+
+❌ **Don't automatically view screenshots after taking them**
+```javascript
+await screenshot({ filename: 'page.png' });
+await Read('path/to/page.png');  // Wastes context - use thumbnail or OCR!
+```
+
+✅ **Do use context-efficient alternatives**
+```javascript
+await screenshot({ filename: 'page.png', autoOcr: true });  // Get text
+// OR
+await Read('path/to/page-thumb.png');  // View small version
+```
+
 ## TeamDynamix Login
 
 ### CANARY Environment ONLY
@@ -222,12 +281,12 @@ Examples of multi-step tasks:
 
 ### Context-Efficient Screenshot Features
 
-**Thumbnail Generation** (Saves Context Tokens)
-- **Parameter**: `thumbnail` (optional, boolean, default: false)
-- Generates a 400px wide thumbnail alongside the full screenshot
+**Thumbnail Generation** (Saves Context Tokens) - **ENABLED BY DEFAULT**
+- **Parameter**: `thumbnail` (optional, boolean, default: **true**)
+- Automatically generates a 400px wide thumbnail alongside the full screenshot
 - Thumbnail filename: `screenshot-name-thumb.png`
-- **Benefit**: View thumbnails instead of full images to save significant context tokens
-- Useful for quick visual verification without loading large images
+- **Benefit**: View thumbnails instead of full images to save ~80% context tokens
+- Set to `false` only when full resolution is absolutely required
 
 **Auto-OCR Text Extraction** (Extract Text Without Viewing)
 - **Parameter**: `autoOcr` (optional, boolean, default: false)

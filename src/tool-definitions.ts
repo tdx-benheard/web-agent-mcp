@@ -56,7 +56,7 @@ export const toolDefinitions: Tool[] = [
   },
   {
     name: 'screenshot',
-    description: 'Capture screenshot with optional thumbnail/OCR. Auto-deletes screenshots older than 7 days, keeps 10 most recent.',
+    description: 'Capture screenshot - automatically creates 400px thumbnail (saves 80% context). Use autoOcr to extract text without viewing. Auto-deletes >7 days old, keeps 10 recent.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -64,8 +64,8 @@ export const toolDefinitions: Tool[] = [
         selector: { type: 'string' },
         filename: { type: 'string' },
         directory: { type: 'string' },
-        thumbnail: { type: 'boolean', default: false, description: 'Generate 400px thumbnail (saves context)' },
-        autoOcr: { type: 'boolean', default: false, description: 'Automatically extract text via OCR' }
+        thumbnail: { type: 'boolean', default: true, description: 'Generate 400px thumbnail (default: true, saves context)' },
+        autoOcr: { type: 'boolean', default: false, description: 'Extract text via OCR instead of viewing image' }
       }
     }
   },

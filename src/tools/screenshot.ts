@@ -140,7 +140,7 @@ export async function handleScreenshot(args: ScreenshotArgs): Promise<ToolResult
   const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
   const filename = args.filename || `screenshot-${timestamp}.png`;
   const filepath = path.join(targetDir, filename);
-  const { fullPage = false, selector, thumbnail = false, autoOcr = false } = args;
+  const { fullPage = false, selector, thumbnail = true, autoOcr = false } = args;
 
   // Take screenshot
   if (selector) {
