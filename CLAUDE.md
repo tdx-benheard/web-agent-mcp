@@ -11,16 +11,16 @@ When committing changes to this repository, always push to GitHub automatically 
 **IMPORTANT**: Follow these guidelines when taking screenshots to minimize context token usage:
 
 #### Default Behavior (Automatic)
-- Screenshots save ONLY 400px thumbnails by default (saves ~80% context tokens)
-- Full resolution images are NOT saved unless you specify `fullResolution: true`
-- Thumbnail filename ends with `-thumb.png`
+- Screenshots save ONLY 800px lowRes by default (saves ~50-60% context tokens & disk space)
+- High resolution images are NOT saved unless you specify `hiRes: true`
+- Filename is exactly what you specify (no suffix added)
 
 #### When to Use Each Feature
 
-**Default: Just take the screenshot** (thumbnail only, most common)
+**Default: Just take the screenshot** (lowRes only, most common)
 - Use for: Visual verification, checking layouts, confirming page state
 - Example: `screenshot({ filename: 'page.png' })`
-- Result: Saves `page-thumb.png` (400px wide)
+- Result: Saves `page.png` (800px lowRes)
 - **This is what you should do 90% of the time**
 
 **Use `autoOcr: true` when you need text:**
@@ -28,48 +28,48 @@ When committing changes to this repository, always push to GitHub automatically 
 - Visual layout doesn't matter, only the text content
 - You want to avoid viewing the image at all
 - Example: `screenshot({ filename: 'error.png', autoOcr: true })`
-- Result: Returns extracted text + saves thumbnail
+- Result: Returns extracted text + saves `error.png` (800px lowRes)
 
-**Use `fullResolution: true` ONLY when:**
+**Use `hiRes: true` ONLY when:**
 - Fine visual details are critical (design review, pixel-perfect verification)
-- Thumbnail resolution (400px) is insufficient for the task
+- 800px lowRes is insufficient for the task
 - User explicitly requests full resolution
-- Example: `screenshot({ filename: 'detailed.png', fullResolution: true })`
-- Result: Saves both `detailed-thumb.png` AND `detailed.png`
+- Example: `screenshot({ filename: 'detailed.png', hiRes: true })`
+- Result: Saves `detailed.png` (full resolution, NO lowRes version)
 - **Rarely needed - ask yourself if you really need this**
 
 #### Workflow Example
 
 ```javascript
-// MOST COMMON: Just take screenshot (thumbnail only)
+// MOST COMMON: Just take screenshot (800px lowRes)
 await screenshot({ filename: 'login-page.png' });
-// Saves: login-page-thumb.png (400px, context-efficient)
+// Saves: login-page.png (800px lowRes)
 
 // If you need the text, use autoOcr
 await screenshot({ filename: 'error.png', autoOcr: true });
-// Returns: Extracted text + saves error-thumb.png
+// Returns: Extracted text + saves error.png (800px lowRes)
 
-// RARE: Only if you absolutely need full resolution
-await screenshot({ filename: 'design.png', fullResolution: true });
-// Saves: design-thumb.png AND design.png
+// RARE: Only if you absolutely need high resolution
+await screenshot({ filename: 'design.png', hiRes: true });
+// Saves: design.png (full resolution ONLY, no lowRes)
 ```
 
 #### What NOT to Do
 
-❌ **Don't request full resolution unnecessarily**
+❌ **Don't request hiRes unnecessarily**
 ```javascript
-await screenshot({ filename: 'page.png', fullResolution: true });  // WHY?
+await screenshot({ filename: 'page.png', hiRes: true });  // WHY?
 ```
 
 ❌ **Don't view images if you just need text**
 ```javascript
 await screenshot({ filename: 'error.png' });
-await Read('path/to/error-thumb.png');  // Should have used autoOcr!
+await Read('path/to/error.png');  // Should have used autoOcr!
 ```
 
 ✅ **Do use the simplest approach**
 ```javascript
-// Default: Just take it
+// Default: Just take it (800px lowRes)
 await screenshot({ filename: 'page.png' });
 
 // Need text? Use autoOcr
@@ -294,12 +294,12 @@ Examples of multi-step tasks:
 
 ### Context-Efficient Screenshot Features
 
-**Thumbnail-Only by Default** (Saves Context Tokens & Disk Space)
-- Screenshots save **ONLY** 400px thumbnails by default
-- No full resolution image is saved unless explicitly requested
-- Thumbnail filename: `screenshot-name-thumb.png`
-- **Benefit**: Saves ~80% context tokens AND disk space
-- Use `fullResolution: true` only when full details are absolutely required
+**LowRes Only by Default** (Saves Context Tokens & Disk Space)
+- Screenshots save **ONLY** 800px lowRes by default
+- No high resolution image is saved unless explicitly requested
+- Filename is exactly what you specify (e.g., `page.png`)
+- **Benefit**: Saves ~50-60% context tokens AND disk space
+- Use `hiRes: true` only when full details are absolutely required
 
 **Auto-OCR Text Extraction** (Extract Text Without Viewing)
 - **Parameter**: `autoOcr` (optional, boolean, default: false)
@@ -318,12 +318,12 @@ Examples of multi-step tasks:
 
 ### Screenshot Usage Examples
 
-**Example 1 - Basic screenshot (thumbnail only, default):**
+**Example 1 - Basic screenshot (lowRes only, default):**
 ```javascript
 await mcp__web-agent-mcp__screenshot({
   filename: 'login-page.png'
 });
-// Saves: login-page-thumb.png (400px wide)
+// Saves: login-page.png (800px lowRes)
 ```
 
 **Example 2 - Extract text with OCR:**
@@ -333,16 +333,16 @@ await mcp__web-agent-mcp__screenshot({
   autoOcr: true
 });
 // Returns: Screenshot path + extracted text
-// Saves: error-message-thumb.png
+// Saves: error-message.png (800px lowRes)
 ```
 
-**Example 3 - Full resolution (rarely needed):**
+**Example 3 - High resolution (rarely needed):**
 ```javascript
 await mcp__web-agent-mcp__screenshot({
   filename: 'design-review.png',
-  fullResolution: true
+  hiRes: true
 });
-// Saves: design-review-thumb.png AND design-review.png
+// Saves: design-review.png (full resolution ONLY)
 ```
 
 **Example 4 - Full-page screenshot with custom directory:**
@@ -352,7 +352,7 @@ await mcp__web-agent-mcp__screenshot({
   fullPage: true,
   directory: 'E:\\MyProject\\screenshots'
 });
-// Saves: E:\MyProject\screenshots\full-page-thumb.png
+// Saves: E:\MyProject\screenshots\full-page.png (800px lowRes)
 ```
 
 ## Testing

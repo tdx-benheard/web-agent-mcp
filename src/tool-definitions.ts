@@ -56,7 +56,7 @@ export const toolDefinitions: Tool[] = [
   },
   {
     name: 'screenshot',
-    description: 'Capture 400px thumbnail screenshot (saves context). Use fullResolution:true only when details matter. Use autoOcr to extract text. Auto-deletes >7 days, keeps 10 recent.',
+    description: 'Capture 800px lowRes screenshot (saves context). Use hiRes:true only when details critical. Use autoOcr to extract text. Auto-deletes >7 days, keeps 10 recent.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -64,7 +64,7 @@ export const toolDefinitions: Tool[] = [
         selector: { type: 'string' },
         filename: { type: 'string' },
         directory: { type: 'string' },
-        fullResolution: { type: 'boolean', default: false, description: 'Save full resolution image (only use when thumbnail insufficient)' },
+        hiRes: { type: 'boolean', default: false, description: 'Save high resolution (only when lowRes insufficient)' },
         autoOcr: { type: 'boolean', default: false, description: 'Extract text via OCR instead of viewing image' }
       }
     }
