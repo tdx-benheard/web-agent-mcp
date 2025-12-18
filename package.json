@@ -1,7 +1,7 @@
 {
   "name": "web-agent-mcp",
   "version": "1.0.0",
-  "description": "MCP server with browser automation, screenshot, and parsing capabilities",
+  "description": "MCP server with browser automation and screenshot capabilities",
   "main": "electron-main.cjs",
   "type": "module",
   "scripts": {
@@ -21,7 +21,6 @@
     "play-sound": "^1.1.6",
     "playwright": "^1.40.0",
     "sharp": "^0.33.0",
-    "tesseract.js": "^5.0.0",
     "vosk-browser": "^0.0.8"
   },
   "devDependencies": {

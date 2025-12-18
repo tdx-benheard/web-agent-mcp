@@ -58,7 +58,6 @@ npm install
 This installs:
 - **playwright** (^1.40.0) - Browser automation
 - **sharp** (^0.33.0) - Image processing (may compile native bindings)
-- **tesseract.js** (^5.0.0) - OCR text extraction
 - **@modelcontextprotocol/sdk** (^1.0.0) - MCP protocol
 - **dotenv** (^16.3.1) - Environment configuration
 
@@ -143,12 +142,7 @@ npm start
    npx playwright install-deps
    ```
 
-4. **Tesseract.js downloads failing**
-   - This happens on first run when OCR is used
-   - Requires internet connection to download language data
-   - Files are cached in `node_modules/tesseract.js`
-
-5. **TypeScript build errors**
+4. **TypeScript build errors**
    ```bash
    npm run build
    # Check for any missing type definitions

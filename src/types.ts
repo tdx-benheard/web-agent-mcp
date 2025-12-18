@@ -1,5 +1,4 @@
 import { Page, BrowserContext, Browser } from 'playwright';
-import { Worker } from 'tesseract.js';
 
 // Console message type
 export interface ConsoleMessage {
@@ -14,7 +13,6 @@ export interface BrowserState {
   browser: Browser | null;
   context: BrowserContext | null;
   currentPage: Page | null;
-  ocrWorker: Worker | null;
   consoleMessages: ConsoleMessage[];
 }
 
@@ -50,12 +48,6 @@ export interface ScreenshotArgs {
   filename?: string;
   directory?: string;
   hiRes?: boolean;
-  autoOcr?: boolean;
-}
-
-export interface ParseScreenshotArgs {
-  filename: string;
-  language?: string;
 }
 
 export interface GetPageContentArgs {

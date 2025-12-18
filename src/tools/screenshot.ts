@@ -1,5 +1,5 @@
-import { initBrowser, initOCR } from '../browser.js';
-import { ScreenshotArgs, ParseScreenshotArgs, ToolResult } from '../types.js';
+import { initBrowser } from '../browser.js';
+import { ScreenshotArgs, ToolResult } from '../types.js';
 import * as fs from 'fs/promises';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
@@ -126,10 +126,9 @@ export async function handleScreenshot(args: ScreenshotArgs): Promise<ToolResult
   const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
   const filename = args.filename || `screenshot-${timestamp}.png`;
   const finalPath = path.join(targetDir, filename);
-  const { fullPage = false, selector, hiRes = false, autoOcr = false } = args;
+  const { fullPage = false, selector, hiRes = false } = args;
 
   let resultText = '';
-  let ocrText: string | undefined;
 
   if (hiRes) {
     // High resolution: Save full screenshot directly
@@ -183,19 +182,6 @@ export async function handleScreenshot(args: ScreenshotArgs): Promise<ToolResult
     }
   }
 
-  // Perform OCR if requested
-  if (autoOcr) {
-    try {
-      const worker = await initOCR();
-      const { data: { text } } = await worker.recognize(finalPath);
-      ocrText = text;
-      resultText += `\n\nExtracted text:\n${text}`;
-    } catch (error) {
-      console.error('Error performing OCR:', error);
-      resultText += '\nFailed to perform OCR';
-    }
-  }
-
   // Run cleanup (async, don't wait for it)
   cleanupOldScreenshots(targetDir).then(({ deleted, kept }) => {
     if (deleted > 0) {
@@ -209,28 +195,6 @@ export async function handleScreenshot(args: ScreenshotArgs): Promise<ToolResult
     content: [{
       type: 'text',
       text: resultText
-    }]
-  };
-}
-
-export async function handleParseScreenshot(args: ParseScreenshotArgs): Promise<ToolResult> {
-  await ensureScreenshotDir();
-  const { filename } = args;
-  const filepath = path.join(SCREENSHOT_DIR, filename);
-
-  // Check if file exists
-  await fs.access(filepath);
-
-  // Initialize OCR if needed
-  const worker = await initOCR();
-
-  // Perform OCR
-  const { data: { text } } = await worker.recognize(filepath);
-
-  return {
-    content: [{
-      type: 'text',
-      text: `Extracted text from ${filename}:\n\n${text}`
     }]
   };
 }

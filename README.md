@@ -8,7 +8,6 @@ An MCP (Model Context Protocol) server that provides browser automation capabili
 - **Element Interaction**: Click buttons, fill forms, type text
 - **Login Automation**: Automated login with username/password
 - **Screenshot Capture**: Take full-page or element-specific screenshots
-- **OCR Capabilities**: Parse text from screenshots using Tesseract.js
 - **Cookie Management**: Get and set browser cookies
 - **Page Content Extraction**: Get HTML or text content
 - **Browser History**: Navigate back/forward, refresh pages
@@ -60,7 +59,6 @@ The configuration has already been set up to make this server available globally
 
 ### Screenshot Tools
 - `screenshot` - Take a screenshot (full page or specific element)
-- `parse_screenshot` - Extract text from a screenshot using OCR
 - `list_screenshots` - List all saved screenshots
 
 ### Content Tools
@@ -79,7 +77,6 @@ After restarting Claude Desktop, the MCP server tools will be available. You can
 ```
 Use the navigate tool to go to https://example.com
 Take a screenshot of the page
-Parse the screenshot to extract text
 ```
 
 ## Directory Structure
@@ -105,10 +102,6 @@ C:\source\mcp\web-agent-mcp\
 ### Browser automation issues
 1. Ensure Chromium is installed: `npx playwright install chromium`
 2. Check if running in headless mode (configured in code)
-
-### OCR not working
-1. Tesseract.js should auto-download language data
-2. Check network connection for first-time setup
 
 ## Development
 

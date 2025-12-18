@@ -30,7 +30,7 @@ import { handleClick, handleType, handlePressKey, handleScroll, handleWait } fro
 import { handleLogin, handleGetCookies, handleSetCookie } from './tools/auth.js';
 
 // Import tool handlers - screenshot
-import { handleScreenshot, handleParseScreenshot, handleListScreenshots } from './tools/screenshot.js';
+import { handleScreenshot, handleListScreenshots } from './tools/screenshot.js';
 
 // Import tool handlers - content
 import { handleGetPageContent, handleQueryPage } from './tools/content.js';
@@ -45,7 +45,6 @@ import {
   TypeArgs,
   LoginArgs,
   ScreenshotArgs,
-  ParseScreenshotArgs,
   GetPageContentArgs,
   WaitArgs,
   ScrollArgs,
@@ -123,8 +122,6 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       // Screenshot tools
       case 'screenshot':
         return await handleScreenshot(args as unknown as ScreenshotArgs) as never;
-      case 'parse_screenshot':
-        return await handleParseScreenshot(args as unknown as ParseScreenshotArgs) as never;
       case 'list_screenshots':
         return await handleListScreenshots() as never;
 

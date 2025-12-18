@@ -1,5 +1,4 @@
 import { chromium, Browser, Page, BrowserContext } from 'playwright';
-import { createWorker, Worker } from 'tesseract.js';
 import { BrowserState } from './types.js';
 
 // Global browser state
@@ -7,7 +6,6 @@ const state: BrowserState = {
   browser: null,
   context: null,
   currentPage: null,
-  ocrWorker: null,
   consoleMessages: []
 };
 
@@ -58,17 +56,7 @@ export function getConsoleMessages(clear: boolean = false) {
 }
 
 /**
- * Initialize OCR worker
- */
-export async function initOCR(): Promise<Worker> {
-  if (!state.ocrWorker) {
-    state.ocrWorker = await createWorker('eng');
-  }
-  return state.ocrWorker;
-}
-
-/**
- * Clean up all browser and OCR resources
+ * Clean up all browser resources
  */
 export async function cleanup(): Promise<void> {
   if (state.browser) {
@@ -76,9 +64,5 @@ export async function cleanup(): Promise<void> {
     state.browser = null;
     state.context = null;
     state.currentPage = null;
-  }
-  if (state.ocrWorker) {
-    await state.ocrWorker.terminate();
-    state.ocrWorker = null;
   }
 }

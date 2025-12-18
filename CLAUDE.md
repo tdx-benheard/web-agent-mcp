@@ -23,13 +23,6 @@ When committing changes to this repository, always push to GitHub automatically 
 - Result: Saves `page.png` (800px lowRes)
 - **This is what you should do 90% of the time**
 
-**Use `autoOcr: true` when you need text:**
-- You need to read text from a page (error messages, labels, content)
-- Visual layout doesn't matter, only the text content
-- You want to avoid viewing the image at all
-- Example: `screenshot({ filename: 'error.png', autoOcr: true })`
-- Result: Returns extracted text + saves `error.png` (800px lowRes)
-
 **Use `hiRes: true` ONLY when:**
 - Fine visual details are critical (design review, pixel-perfect verification)
 - 800px lowRes is insufficient for the task
@@ -45,10 +38,6 @@ When committing changes to this repository, always push to GitHub automatically 
 await screenshot({ filename: 'login-page.png' });
 // Saves: login-page.png (800px lowRes)
 
-// If you need the text, use autoOcr
-await screenshot({ filename: 'error.png', autoOcr: true });
-// Returns: Extracted text + saves error.png (800px lowRes)
-
 // RARE: Only if you absolutely need high resolution
 await screenshot({ filename: 'design.png', hiRes: true });
 // Saves: design.png (full resolution ONLY, no lowRes)
@@ -61,19 +50,10 @@ await screenshot({ filename: 'design.png', hiRes: true });
 await screenshot({ filename: 'page.png', hiRes: true });  // WHY?
 ```
 
-❌ **Don't view images if you just need text**
-```javascript
-await screenshot({ filename: 'error.png' });
-await Read('path/to/error.png');  // Should have used autoOcr!
-```
-
 ✅ **Do use the simplest approach**
 ```javascript
 // Default: Just take it (800px lowRes)
 await screenshot({ filename: 'page.png' });
-
-// Need text? Use autoOcr
-await screenshot({ filename: 'error.png', autoOcr: true });
 ```
 
 ## TeamDynamix Login
@@ -307,13 +287,6 @@ Examples of multi-step tasks:
 - **Benefit**: Saves ~50-60% context tokens AND disk space
 - Use `hiRes: true` only when full details are absolutely required
 
-**Auto-OCR Text Extraction** (Extract Text Without Viewing)
-- **Parameter**: `autoOcr` (optional, boolean, default: false)
-- Automatically extracts text from screenshot using OCR
-- OCR runs on thumbnail if generated, otherwise on full screenshot
-- **Benefit**: Get text content without viewing the image, saving context tokens
-- Returns extracted text in the tool response
-
 **Automatic Cleanup** (Prevents Accumulation)
 - Runs automatically after each screenshot
 - **Strategy**: Hybrid time + count based
@@ -332,17 +305,7 @@ await mcp__web-agent-mcp__screenshot({
 // Saves: login-page.png (800px lowRes)
 ```
 
-**Example 2 - Extract text with OCR:**
-```javascript
-await mcp__web-agent-mcp__screenshot({
-  filename: 'error-message.png',
-  autoOcr: true
-});
-// Returns: Screenshot path + extracted text
-// Saves: error-message.png (800px lowRes)
-```
-
-**Example 3 - High resolution (rarely needed):**
+**Example 2 - High resolution (rarely needed):**
 ```javascript
 await mcp__web-agent-mcp__screenshot({
   filename: 'design-review.png',
@@ -351,7 +314,7 @@ await mcp__web-agent-mcp__screenshot({
 // Saves: design-review.png (full resolution ONLY)
 ```
 
-**Example 4 - Full-page screenshot with custom directory:**
+**Example 3 - Full-page screenshot with custom directory:**
 ```javascript
 await mcp__web-agent-mcp__screenshot({
   filename: 'full-page.png',

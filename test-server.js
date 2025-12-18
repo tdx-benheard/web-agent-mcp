@@ -64,7 +64,7 @@ async function runTests() {
     console.log('\nTo test browser automation:');
     console.log('1. Restart Claude Desktop');
     console.log('2. Use the MCP tools in any Claude Code instance');
-    console.log('\nAvailable tools: navigate, click, type, screenshot, parse_screenshot, etc.');
+    console.log('\nAvailable tools: navigate, click, type, screenshot, etc.');
     process.exit(0);
   }, 2000);
 }

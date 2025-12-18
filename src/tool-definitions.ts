@@ -56,7 +56,7 @@ export const toolDefinitions: Tool[] = [
   },
   {
     name: 'screenshot',
-    description: 'Capture 800px lowRes screenshot (saves context). Use hiRes:true only when details critical. Use autoOcr to extract text. Auto-deletes >7 days, keeps 10 recent.',
+    description: 'Capture 800px lowRes screenshot (saves context). Use hiRes:true only when details critical. Auto-deletes >7 days, keeps 10 recent.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -64,21 +64,8 @@ export const toolDefinitions: Tool[] = [
         selector: { type: 'string' },
         filename: { type: 'string' },
         directory: { type: 'string' },
-        hiRes: { type: 'boolean', default: false, description: 'Save high resolution (only when lowRes insufficient)' },
-        autoOcr: { type: 'boolean', default: false, description: 'Extract text via OCR instead of viewing image' }
+        hiRes: { type: 'boolean', default: false, description: 'Save high resolution (only when lowRes insufficient)' }
       }
-    }
-  },
-  {
-    name: 'parse_screenshot',
-    description: 'OCR text from screenshot',
-    inputSchema: {
-      type: 'object',
-      properties: {
-        filename: { type: 'string' },
-        language: { type: 'string', default: 'eng' }
-      },
-      required: ['filename']
     }
   },
   {
