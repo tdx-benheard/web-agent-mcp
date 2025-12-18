@@ -38,6 +38,9 @@ import { handleGetPageContent, handleQueryPage } from './tools/content.js';
 // Import tool handlers - debugging
 import { handleGetConsoleLogs, handleExecuteConsole } from './tools/debugging.js';
 
+// Import tool handlers - iframe
+import { handleSwitchToIframe, handleSwitchToMainContent, handleListIframes, handleGetCurrentFrame } from './tools/iframe.js';
+
 // Import types
 import {
   NavigateArgs,
@@ -51,7 +54,8 @@ import {
   GetCookiesArgs,
   SetCookieArgs,
   PressKeyArgs,
-  QueryPageArgs
+  QueryPageArgs,
+  SwitchToIframeArgs
 } from './types.js';
 
 // Create MCP server
@@ -136,6 +140,16 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         return await handleGetConsoleLogs(args as { clear?: boolean; filter?: string }) as never;
       case 'execute_console':
         return await handleExecuteConsole(args as { code: string }) as never;
+
+      // Iframe tools
+      case 'switch_to_iframe':
+        return await handleSwitchToIframe(args as unknown as SwitchToIframeArgs) as never;
+      case 'switch_to_main_content':
+        return await handleSwitchToMainContent() as never;
+      case 'list_iframes':
+        return await handleListIframes() as never;
+      case 'get_current_frame':
+        return await handleGetCurrentFrame() as never;
 
       default:
         throw new McpError(

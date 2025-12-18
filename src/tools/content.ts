@@ -1,15 +1,24 @@
-import { initBrowser } from '../browser.js';
+import { initBrowser, getCurrentFrame } from '../browser.js';
 import { GetPageContentArgs, QueryPageArgs, QuerySpec, QueryResults, ToolResult } from '../types.js';
 
-export async function handleGetPageContent(args: GetPageContentArgs): Promise<ToolResult> {
+/**
+ * Get the current context (frame or page)
+ */
+async function getContext() {
   const page = await initBrowser();
+  const currentFrame = getCurrentFrame();
+  return currentFrame || page;
+}
+
+export async function handleGetPageContent(args: GetPageContentArgs): Promise<ToolResult> {
+  const context = await getContext();
   const { format = 'text' } = args;
 
   let content: string;
   if (format === 'html') {
-    content = await page.content();
+    content = await context.content();
   } else {
-    content = await page.textContent('body') || '';
+    content = await context.textContent('body') || '';
   }
 
   return {
@@ -21,7 +30,7 @@ export async function handleGetPageContent(args: GetPageContentArgs): Promise<To
 }
 
 export async function handleQueryPage(args: QueryPageArgs): Promise<ToolResult> {
-  const page = await initBrowser();
+  const context = await getContext();
   const { queries } = args;
 
   if (!queries || !Array.isArray(queries)) {
@@ -29,7 +38,7 @@ export async function handleQueryPage(args: QueryPageArgs): Promise<ToolResult> 
   }
 
   // Execute all queries in the browser context
-  const results = await page.evaluate((querySpecs: QuerySpec[]): QueryResults => {
+  const results = await context.evaluate((querySpecs: QuerySpec[]): QueryResults => {
     const output: Record<string, string | string[] | null> = {};
 
     for (const spec of querySpecs) {

@@ -6,7 +6,8 @@ const state: BrowserState = {
   browser: null,
   context: null,
   currentPage: null,
-  consoleMessages: []
+  consoleMessages: [],
+  currentFrame: null
 };
 
 /**
@@ -56,6 +57,27 @@ export function getConsoleMessages(clear: boolean = false) {
 }
 
 /**
+ * Set the current frame context
+ */
+export function setCurrentFrame(frame: any): void {
+  state.currentFrame = frame;
+}
+
+/**
+ * Get the current frame context
+ */
+export function getCurrentFrame(): any {
+  return state.currentFrame;
+}
+
+/**
+ * Clear the current frame context (return to main page)
+ */
+export function clearCurrentFrame(): void {
+  state.currentFrame = null;
+}
+
+/**
  * Clean up all browser resources
  */
 export async function cleanup(): Promise<void> {
@@ -64,5 +86,6 @@ export async function cleanup(): Promise<void> {
     state.browser = null;
     state.context = null;
     state.currentPage = null;
+    state.currentFrame = null;
   }
 }

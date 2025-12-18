@@ -1,6 +1,15 @@
-import { initBrowser } from '../browser.js';
+import { initBrowser, getCurrentFrame } from '../browser.js';
 import { ClickArgs, TypeArgs, PressKeyArgs, ScrollArgs, WaitArgs, ToolResult } from '../types.js';
 import { execSync } from 'child_process';
+
+/**
+ * Get the current context (frame or page)
+ */
+async function getContext() {
+  const page = await initBrowser();
+  const currentFrame = getCurrentFrame();
+  return currentFrame || page;
+}
 
 /**
  * Decode text if it has base64: or dpapi: prefix (useful for passwords)
@@ -19,18 +28,18 @@ function decodeIfBase64(text: string): string {
 }
 
 export async function handleClick(args: ClickArgs): Promise<ToolResult> {
-  const page = await initBrowser();
+  const context = await getContext();
   const { selector, clickCount = 1, button = 'left' } = args;
 
   // Try to click by text first, then by selector
   try {
-    await page.click(`text="${selector}"`, {
+    await context.click(`text="${selector}"`, {
       clickCount,
       button,
       timeout: 5000
     });
   } catch {
-    await page.click(selector, {
+    await context.click(selector, {
       clickCount,
       button
     });
@@ -45,16 +54,16 @@ export async function handleClick(args: ClickArgs): Promise<ToolResult> {
 }
 
 export async function handleType(args: TypeArgs): Promise<ToolResult> {
-  const page = await initBrowser();
+  const context = await getContext();
   const { selector, text, delay = 0 } = args;
 
   // Decode text if base64-encoded
   const decodedText = decodeIfBase64(text);
 
-  await page.fill(selector, decodedText);
+  await context.fill(selector, decodedText);
 
   if (delay > 0) {
-    await page.type(selector, decodedText, { delay });
+    await context.type(selector, decodedText, { delay });
   }
 
   return {
@@ -144,11 +153,11 @@ export async function handleScroll(args: ScrollArgs): Promise<ToolResult> {
 }
 
 export async function handleWait(args: WaitArgs): Promise<ToolResult> {
-  const page = await initBrowser();
+  const context = await getContext();
   const { selector, timeout = 14000, state = 'visible' } = args;
 
   if (selector) {
-    await page.waitForSelector(selector, {
+    await context.waitForSelector(selector, {
       timeout,
       state
     });
@@ -162,7 +171,7 @@ export async function handleWait(args: WaitArgs): Promise<ToolResult> {
   }
 
   // If no selector, just wait
-  await page.waitForTimeout(timeout);
+  await context.waitForTimeout(timeout);
   return {
     content: [{
       type: 'text',

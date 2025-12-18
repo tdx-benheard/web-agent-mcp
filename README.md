@@ -13,6 +13,7 @@ An MCP (Model Context Protocol) server that provides browser automation capabili
 - **Browser History**: Navigate back/forward, refresh pages
 - **Scrolling**: Programmatic page scrolling
 - **Wait Conditions**: Wait for elements or conditions
+- **Iframe Support**: Switch context between main page and iframes
 
 ## Quick Start
 
@@ -69,6 +70,18 @@ The configuration has already been set up to make this server available globally
 ### Utility Tools
 - `wait` - Wait for an element or timeout
 - `scroll` - Scroll the page in any direction
+- `press_key` - Press keyboard keys or key combinations
+- `query_page` - Extract DOM elements by CSS selector
+
+### Iframe Tools
+- `list_iframes` - List all iframes on the current page
+- `switch_to_iframe` - Switch context to an iframe (by selector, name, or index)
+- `switch_to_main_content` - Switch back to main page content
+- `get_current_frame` - Get current frame context
+
+### Debugging Tools
+- `get_console_logs` - Get browser console messages
+- `execute_console` - Execute JavaScript in browser console
 
 ## Usage in Claude Code
 

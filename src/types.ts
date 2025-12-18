@@ -1,4 +1,4 @@
-import { Page, BrowserContext, Browser } from 'playwright';
+import { Page, BrowserContext, Browser, Frame } from 'playwright';
 
 // Console message type
 export interface ConsoleMessage {
@@ -14,6 +14,7 @@ export interface BrowserState {
   context: BrowserContext | null;
   currentPage: Page | null;
   consoleMessages: ConsoleMessage[];
+  currentFrame: Frame | null;
 }
 
 // Tool argument types
@@ -89,6 +90,22 @@ export interface QueryPageArgs {
     index?: number;
     all?: boolean;
   }>;
+}
+
+export interface SwitchToIframeArgs {
+  selector?: string;
+  name?: string;
+  index?: number;
+}
+
+export interface GetConsoleLogsArgs {
+  clear?: boolean;
+  filter?: string;
+  limit?: number;
+}
+
+export interface ExecuteConsoleArgs {
+  code: string;
 }
 
 // Tool result type (matches MCP SDK CallToolResult)

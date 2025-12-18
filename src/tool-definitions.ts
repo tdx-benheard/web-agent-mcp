@@ -203,5 +203,32 @@ export const toolDefinitions: Tool[] = [
       },
       required: ['code']
     }
+  },
+  {
+    name: 'switch_to_iframe',
+    description: 'Switch to iframe context by selector, name, or index',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        selector: { type: 'string', description: 'CSS selector for iframe element' },
+        name: { type: 'string', description: 'Name attribute of iframe' },
+        index: { type: 'number', description: 'Zero-based index of iframe' }
+      }
+    }
+  },
+  {
+    name: 'switch_to_main_content',
+    description: 'Switch back to main page content from iframe',
+    inputSchema: { type: 'object', properties: {} }
+  },
+  {
+    name: 'list_iframes',
+    description: 'List all iframes on current page',
+    inputSchema: { type: 'object', properties: {} }
+  },
+  {
+    name: 'get_current_frame',
+    description: 'Get current frame context (iframe or main page)',
+    inputSchema: { type: 'object', properties: {} }
   }
 ];

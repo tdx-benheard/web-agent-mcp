@@ -6,7 +6,7 @@ All components have been successfully installed and configured:
 
 ### 1. Server Implementation ✓
 - **Location**: `C:\source\mcp\web-agent-mcp\src\index.ts`
-- **Features**: All 18 browser automation tools implemented
+- **Features**: All 22 browser automation tools implemented
 - **Build Status**: Successfully compiled to `dist/index.js`
 
 ### 2. Dependencies Installed ✓
@@ -38,6 +38,18 @@ All components have been successfully installed and configured:
 - `get_cookies` - Retrieve cookies
 - `set_cookie` - Set cookies
 - `wait` - Wait for elements/conditions
+- `query_page` - Extract DOM elements by CSS selector
+- `press_key` - Press keyboard keys or combinations
+
+#### Iframe Support
+- `list_iframes` - List all iframes on page
+- `switch_to_iframe` - Switch to iframe context
+- `switch_to_main_content` - Switch back to main page
+- `get_current_frame` - Get current frame context
+
+#### Debugging
+- `get_console_logs` - Get browser console messages
+- `execute_console` - Execute JavaScript in console
 
 ### 4. Global Configuration ✓
 - **Config File**: `C:\Users\ben.heard\AppData\Roaming\Claude\claude_desktop_config.json`
@@ -47,8 +59,9 @@ All components have been successfully installed and configured:
 ### 5. Test Results ✓
 - Server starts successfully
 - JSON-RPC communication working
-- All 18 tools properly registered
+- All 22 tools properly registered
 - Resource handling functional
+- Iframe context switching implemented
 
 ## How to Use
 

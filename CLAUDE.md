@@ -241,6 +241,85 @@ await mcp__web-agent-mcp__execute_console({
 - Console output from the executed code is captured and available via `get_console_logs`
 - Useful for debugging, testing, and dynamically manipulating pages
 
+## Iframe Tools
+
+The web-agent-mcp server supports working with iframes through explicit context switching. This is essential for TeamDynamix applications where content is often loaded in iframes.
+
+### Available Iframe Tools
+
+**list_iframes**
+- **Purpose**: List all iframes on the current page
+- **Parameters**: None
+- **Returns**: Array of iframe information (index, name, URL)
+
+**switch_to_iframe**
+- **Purpose**: Switch context to an iframe
+- **Parameters**:
+  - `selector` (optional): CSS selector for iframe element (e.g., `#iframe_627_TDTickets`)
+  - `name` (optional): Name attribute of iframe
+  - `index` (optional): Zero-based index of iframe (e.g., `0` for first iframe, `1` for second)
+- **Note**: Provide one of: selector, name, or index
+
+**switch_to_main_content**
+- **Purpose**: Switch back to main page content from iframe
+- **Parameters**: None
+
+**get_current_frame**
+- **Purpose**: Check current frame context
+- **Parameters**: None
+- **Returns**: Current context (main page or iframe details)
+
+### Iframe Usage Examples
+
+**Example 1 - List and switch to iframe by index:**
+```javascript
+// First, discover what iframes are on the page
+await mcp__web-agent-mcp__list_iframes({});
+// Returns: [{ index: 0, name: "chatbotIframe", url: "..." }, { index: 1, name: "", url: "..." }]
+
+// Switch to the second iframe (work management)
+await mcp__web-agent-mcp__switch_to_iframe({ index: 1 });
+
+// Now all interactions (click, type, query_page, etc.) work within the iframe
+await mcp__web-agent-mcp__query_page({
+  queries: [{ name: "title", selector: "h1", extract: "text" }]
+});
+```
+
+**Example 2 - Switch to iframe by CSS selector:**
+```javascript
+// Switch to iframe by ID
+await mcp__web-agent-mcp__switch_to_iframe({ selector: '#iframe_627_TDTickets' });
+
+// Click a button inside the iframe
+await mcp__web-agent-mcp__click({ selector: '.create-ticket-btn' });
+```
+
+**Example 3 - Check current context:**
+```javascript
+// Check what context you're in
+await mcp__web-agent-mcp__get_current_frame({});
+// Returns: "Current context: main page content" or iframe details
+```
+
+**Example 4 - Switch back to main page:**
+```javascript
+// After working in an iframe, switch back to main page
+await mcp__web-agent-mcp__switch_to_main_content({});
+
+// Now interactions work on the main page again
+await mcp__web-agent-mcp__click({ selector: '.main-nav-menu' });
+```
+
+### Important Notes
+
+- **Explicit switching required**: Unlike some browsers, you must explicitly switch to an iframe before interacting with elements inside it
+- **All tools respect iframe context**: Once switched to an iframe, click, type, wait, query_page, and get_page_content all operate within that iframe
+- **TeamDynamix structure**: TDNext pages typically have 2 iframes:
+  - Index 0: Chatbot iframe (`chatbotIframe`)
+  - Index 1: Work Management iframe (`iframe_627_TDTickets`)
+- **Switch back when done**: Remember to call `switch_to_main_content` when you're finished working in an iframe
+
 ## Web Navigation Workflow
 
 ### Single Action Instructions
