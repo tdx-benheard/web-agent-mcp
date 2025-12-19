@@ -13,9 +13,9 @@ const __dirname = dirname(__filename);
 const SCREENSHOT_DIR = path.join(__dirname, '..', '..', 'screenshots');
 
 // Cleanup configuration
-const MAX_SCREENSHOT_AGE_DAYS = 7; // Delete screenshots older than 7 days
-const MIN_SCREENSHOTS_TO_KEEP = 10; // Always keep at least this many recent screenshots
+const MAX_SCREENSHOTS_TO_KEEP = 20; // Delete oldest when over this limit
 const LOW_RES_WIDTH = 800; // Low resolution screenshot width in pixels
+const JPEG_QUALITY = 75; // JPEG quality (1-100)
 
 /**
  * Ensure screenshot directory exists
@@ -37,13 +37,12 @@ async function createLowRes(sourcePath: string, targetPath: string): Promise<voi
       fit: 'inside',
       withoutEnlargement: true
     })
+    .jpeg({ quality: JPEG_QUALITY })
     .toFile(targetPath);
 }
 
 /**
- * Cleanup old screenshots with hybrid strategy:
- * - Delete screenshots older than MAX_SCREENSHOT_AGE_DAYS
- * - Always keep at least MIN_SCREENSHOTS_TO_KEEP most recent screenshots
+ * Cleanup old screenshots - keep only the most recent MAX_SCREENSHOTS_TO_KEEP
  */
 async function cleanupOldScreenshots(targetDir: string = SCREENSHOT_DIR): Promise<{ deleted: number, kept: number }> {
   try {
@@ -52,8 +51,8 @@ async function cleanupOldScreenshots(targetDir: string = SCREENSHOT_DIR): Promis
       (f.endsWith('.png') || f.endsWith('.jpg')) && !f.startsWith('temp-')
     );
 
-    if (imageFiles.length === 0) {
-      return { deleted: 0, kept: 0 };
+    if (imageFiles.length <= MAX_SCREENSHOTS_TO_KEEP) {
+      return { deleted: 0, kept: imageFiles.length };
     }
 
     // Get file stats
@@ -72,27 +71,9 @@ async function cleanupOldScreenshots(targetDir: string = SCREENSHOT_DIR): Promis
     // Sort by modification time (newest first)
     fileStats.sort((a, b) => b.mtime - a.mtime);
 
-    // Determine which files to delete
-    const now = Date.now();
-    const maxAge = MAX_SCREENSHOT_AGE_DAYS * 24 * 60 * 60 * 1000;
-    const toDelete: typeof fileStats = [];
+    // Delete everything beyond the limit
+    const toDelete = fileStats.slice(MAX_SCREENSHOTS_TO_KEEP);
 
-    for (let i = 0; i < fileStats.length; i++) {
-      const file = fileStats[i];
-      const age = now - file.mtime;
-
-      // Keep if within minimum count
-      if (i < MIN_SCREENSHOTS_TO_KEEP) {
-        continue;
-      }
-
-      // Delete if older than max age
-      if (age > maxAge) {
-        toDelete.push(file);
-      }
-    }
-
-    // Delete old files
     let deletedCount = 0;
     for (const file of toDelete) {
       try {
@@ -103,7 +84,7 @@ async function cleanupOldScreenshots(targetDir: string = SCREENSHOT_DIR): Promis
       }
     }
 
-    return { deleted: deletedCount, kept: fileStats.length - deletedCount };
+    return { deleted: deletedCount, kept: MAX_SCREENSHOTS_TO_KEEP };
   } catch (error) {
     console.error('Error during cleanup:', error);
     return { deleted: 0, kept: 0 };
@@ -124,27 +105,47 @@ export async function handleScreenshot(args: ScreenshotArgs): Promise<ToolResult
   }
 
   const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-  const filename = args.filename || `screenshot-${timestamp}.png`;
+  const filename = args.filename || `screenshot-${timestamp}.jpg`;
   const finalPath = path.join(targetDir, filename);
   const { fullPage = false, selector, hiRes = false } = args;
 
   let resultText = '';
 
   if (hiRes) {
-    // High resolution: Save full screenshot directly
+    // High resolution: Save full screenshot, convert to JPEG
+    const tempFullPath = path.join(targetDir, `temp-hires-${filename}`);
+
     if (selector) {
       const element = await page.$(selector);
       if (element) {
-        await element.screenshot({ path: finalPath });
+        await element.screenshot({ path: tempFullPath });
       } else {
         throw new Error(`Element not found: ${selector}`);
       }
     } else {
       await page.screenshot({
-        path: finalPath,
+        path: tempFullPath,
         fullPage
       });
     }
+
+    // Convert to JPEG (higher quality for hiRes)
+    try {
+      await sharp(tempFullPath)
+        .jpeg({ quality: 85 })
+        .toFile(finalPath);
+    } catch (error) {
+      console.error('Error converting to JPEG:', error);
+      throw new Error('Failed to convert screenshot to JPEG');
+    }
+
+    // Delete temp file
+    try {
+      await fs.unlink(tempFullPath);
+    } catch (error) {
+      console.error('Error deleting temp screenshot:', error);
+    }
+
     resultText = `Screenshot saved (hiRes): ${finalPath}`;
   } else {
     // Low resolution (default): Capture full, resize to 800px, save as lowRes
@@ -168,7 +169,7 @@ export async function handleScreenshot(args: ScreenshotArgs): Promise<ToolResult
     // Create low resolution version
     try {
       await createLowRes(tempFullPath, finalPath);
-      resultText = `Screenshot saved (lowRes 800px): ${finalPath}`;
+      resultText = `Screenshot saved (800px JPEG): ${finalPath}`;
     } catch (error) {
       console.error('Error creating low resolution screenshot:', error);
       throw new Error('Failed to create low resolution screenshot');
