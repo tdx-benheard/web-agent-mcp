@@ -11,49 +11,50 @@ When committing changes to this repository, always push to GitHub automatically 
 **IMPORTANT**: Follow these guidelines when taking screenshots to minimize context token usage:
 
 #### Default Behavior (Automatic)
-- Screenshots save ONLY 800px lowRes by default (saves ~50-60% context tokens & disk space)
-- High resolution images are NOT saved unless you specify `hiRes: true`
+- Screenshots save as 800px JPEG at 75% quality by default (saves ~80% vs PNG)
+- High resolution uses JPEG at 85% quality unless you specify `hiRes: true`
 - Filename is exactly what you specify (no suffix added)
+- Max 20 screenshots kept, oldest deleted automatically
 
 #### When to Use Each Feature
 
-**Default: Just take the screenshot** (lowRes only, most common)
+**Default: Just take the screenshot** (most common)
 - Use for: Visual verification, checking layouts, confirming page state
-- Example: `screenshot({ filename: 'page.png' })`
-- Result: Saves `page.png` (800px lowRes)
+- Example: `screenshot({ filename: 'page.jpg' })`
+- Result: Saves `page.jpg` (800px JPEG 75%)
 - **This is what you should do 90% of the time**
 
 **Use `hiRes: true` ONLY when:**
 - Fine visual details are critical (design review, pixel-perfect verification)
-- 800px lowRes is insufficient for the task
+- 800px is insufficient for the task
 - User explicitly requests full resolution
-- Example: `screenshot({ filename: 'detailed.png', hiRes: true })`
-- Result: Saves `detailed.png` (full resolution, NO lowRes version)
+- Example: `screenshot({ filename: 'detailed.jpg', hiRes: true })`
+- Result: Saves `detailed.jpg` (full resolution JPEG 85%)
 - **Rarely needed - ask yourself if you really need this**
 
 #### Workflow Example
 
 ```javascript
-// MOST COMMON: Just take screenshot (800px lowRes)
-await screenshot({ filename: 'login-page.png' });
-// Saves: login-page.png (800px lowRes)
+// MOST COMMON: Just take screenshot (800px JPEG)
+await screenshot({ filename: 'login-page.jpg' });
+// Saves: login-page.jpg (800px JPEG 75%)
 
 // RARE: Only if you absolutely need high resolution
-await screenshot({ filename: 'design.png', hiRes: true });
-// Saves: design.png (full resolution ONLY, no lowRes)
+await screenshot({ filename: 'design.jpg', hiRes: true });
+// Saves: design.jpg (full resolution JPEG 85%)
 ```
 
 #### What NOT to Do
 
 ❌ **Don't request hiRes unnecessarily**
 ```javascript
-await screenshot({ filename: 'page.png', hiRes: true });  // WHY?
+await screenshot({ filename: 'page.jpg', hiRes: true });  // WHY?
 ```
 
 ✅ **Do use the simplest approach**
 ```javascript
-// Default: Just take it (800px lowRes)
-await screenshot({ filename: 'page.png' });
+// Default: Just take it (800px JPEG)
+await screenshot({ filename: 'page.jpg' });
 ```
 
 ## TeamDynamix Login
@@ -345,7 +346,7 @@ Examples of multi-step tasks:
 ### Screenshot Location
 - **Default Path**: `./screenshots/` (relative to MCP server installation directory)
 - By default, screenshots are saved to the `screenshots/` directory within the web-agent-mcp installation
-- Screenshots are named with timestamps (e.g., `screenshot-2025-11-21T22-12-57-732Z.png`)
+- Screenshots are named with timestamps (e.g., `screenshot-2025-11-21T22-12-57-732Z.jpg`)
 - Custom filenames can be specified when taking screenshots
 - The tool always displays the full absolute path when a screenshot is taken
 - Use `mcp__web-agent-mcp__list_screenshots` to see all available screenshots and their location
@@ -359,48 +360,45 @@ Examples of multi-step tasks:
 
 ### Context-Efficient Screenshot Features
 
-**LowRes Only by Default** (Saves Context Tokens & Disk Space)
-- Screenshots save **ONLY** 800px lowRes by default
-- No high resolution image is saved unless explicitly requested
-- Filename is exactly what you specify (e.g., `page.png`)
-- **Benefit**: Saves ~50-60% context tokens AND disk space
+**JPEG Format** (Saves Context Tokens & Disk Space)
+- Screenshots save as 800px JPEG at 75% quality by default
+- hiRes uses full resolution JPEG at 85% quality
+- Filename is exactly what you specify (e.g., `page.jpg`)
+- **Benefit**: Saves ~80% vs PNG format
 - Use `hiRes: true` only when full details are absolutely required
 
 **Automatic Cleanup** (Prevents Accumulation)
 - Runs automatically after each screenshot
-- **Strategy**: Hybrid time + count based
-  - Deletes screenshots older than 7 days
-  - Always keeps the 10 most recent screenshots
-- Deletes both full screenshots and their thumbnails
+- **Strategy**: Keeps max 20 screenshots, deletes oldest beyond that
 - **Benefit**: Prevents screenshot directory from growing indefinitely
 
 ### Screenshot Usage Examples
 
-**Example 1 - Basic screenshot (lowRes only, default):**
+**Example 1 - Basic screenshot (default):**
 ```javascript
 await mcp__web-agent-mcp__screenshot({
-  filename: 'login-page.png'
+  filename: 'login-page.jpg'
 });
-// Saves: login-page.png (800px lowRes)
+// Saves: login-page.jpg (800px JPEG 75%)
 ```
 
 **Example 2 - High resolution (rarely needed):**
 ```javascript
 await mcp__web-agent-mcp__screenshot({
-  filename: 'design-review.png',
+  filename: 'design-review.jpg',
   hiRes: true
 });
-// Saves: design-review.png (full resolution ONLY)
+// Saves: design-review.jpg (full resolution JPEG 85%)
 ```
 
 **Example 3 - Full-page screenshot with custom directory:**
 ```javascript
 await mcp__web-agent-mcp__screenshot({
-  filename: 'full-page.png',
+  filename: 'full-page.jpg',
   fullPage: true,
   directory: 'E:\\MyProject\\screenshots'
 });
-// Saves: E:\MyProject\screenshots\full-page.png (800px lowRes)
+// Saves: E:\MyProject\screenshots\full-page.jpg (800px JPEG 75%)
 ```
 
 ## Testing
