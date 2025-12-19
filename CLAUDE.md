@@ -12,7 +12,7 @@ When committing changes to this repository, always push to GitHub automatically 
 
 #### Default Behavior (Automatic)
 - Screenshots save as 800px JPEG at 75% quality by default (saves ~80% vs PNG)
-- High resolution uses JPEG at 85% quality unless you specify `hiRes: true`
+- High resolution uses full resolution JPEG at 85% quality when you specify `hiRes: true`
 - Filename is exactly what you specify (no suffix added)
 - Max 20 screenshots kept, oldest deleted automatically
 
@@ -369,7 +369,7 @@ Examples of multi-step tasks:
 
 **Automatic Cleanup** (Prevents Accumulation)
 - Runs automatically after each screenshot
-- **Strategy**: Keeps max 20 screenshots, deletes oldest beyond that
+- **Strategy**: Max 20 screenshots kept, oldest deleted beyond that
 - **Benefit**: Prevents screenshot directory from growing indefinitely
 
 ### Screenshot Usage Examples

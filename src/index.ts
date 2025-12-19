@@ -21,16 +21,16 @@ import { toolDefinitions } from './tool-definitions.js';
 import { listScreenshotResources, readScreenshotResource } from './resources.js';
 
 // Import tool handlers - navigation
-import { handleNavigate, handleGoBack, handleGoForward, handleRefresh } from './tools/navigation.js';
+import { handleNavigate } from './tools/navigation.js';
 
 // Import tool handlers - interaction
 import { handleClick, handleType, handlePressKey, handleScroll, handleWait } from './tools/interaction.js';
 
 // Import tool handlers - auth
-import { handleLogin, handleGetCookies, handleSetCookie } from './tools/auth.js';
+import { handleLogin } from './tools/auth.js';
 
 // Import tool handlers - screenshot
-import { handleScreenshot, handleListScreenshots } from './tools/screenshot.js';
+import { handleScreenshot } from './tools/screenshot.js';
 
 // Import tool handlers - content
 import { handleGetPageContent, handleQueryPage } from './tools/content.js';
@@ -51,8 +51,6 @@ import {
   GetPageContentArgs,
   WaitArgs,
   ScrollArgs,
-  GetCookiesArgs,
-  SetCookieArgs,
   PressKeyArgs,
   QueryPageArgs,
   SwitchToIframeArgs
@@ -96,12 +94,6 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       // Navigation tools
       case 'navigate':
         return await handleNavigate(args as unknown as NavigateArgs) as never;
-      case 'go_back':
-        return await handleGoBack() as never;
-      case 'go_forward':
-        return await handleGoForward() as never;
-      case 'refresh':
-        return await handleRefresh() as never;
 
       // Interaction tools
       case 'click':
@@ -118,16 +110,10 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       // Auth tools
       case 'login':
         return await handleLogin(args as unknown as LoginArgs) as never;
-      case 'get_cookies':
-        return await handleGetCookies(args as unknown as GetCookiesArgs) as never;
-      case 'set_cookie':
-        return await handleSetCookie(args as unknown as SetCookieArgs) as never;
 
       // Screenshot tools
       case 'screenshot':
         return await handleScreenshot(args as unknown as ScreenshotArgs) as never;
-      case 'list_screenshots':
-        return await handleListScreenshots() as never;
 
       // Content tools
       case 'get_page_content':

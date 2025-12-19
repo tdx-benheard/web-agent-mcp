@@ -105,7 +105,15 @@ export async function handleScreenshot(args: ScreenshotArgs): Promise<ToolResult
   }
 
   const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-  const filename = args.filename || `screenshot-${timestamp}.jpg`;
+  let filename = args.filename || `screenshot-${timestamp}.jpg`;
+
+  // Force .jpg extension for all new screenshots
+  if (filename.toLowerCase().endsWith('.png')) {
+    filename = filename.slice(0, -4) + '.jpg';
+  } else if (!filename.toLowerCase().endsWith('.jpg') && !filename.toLowerCase().endsWith('.jpeg')) {
+    filename = filename + '.jpg';
+  }
+
   const finalPath = path.join(targetDir, filename);
   const { fullPage = false, selector, hiRes = false } = args;
 

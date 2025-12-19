@@ -28,7 +28,7 @@ export const toolDefinitions: Tool[] = [
   },
   {
     name: 'type',
-    description: 'Type into input. Supports base64:/dpapi: prefix for encoded passwords.',
+    description: 'Type into input. Supports base64:/dpapi: prefix for passwords.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -41,7 +41,7 @@ export const toolDefinitions: Tool[] = [
   },
   {
     name: 'login',
-    description: 'Login with credentials. Supports base64:/dpapi: prefix for encoded passwords.',
+    description: 'Login with credentials. Supports base64:/dpapi: prefix for passwords.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -56,7 +56,7 @@ export const toolDefinitions: Tool[] = [
   },
   {
     name: 'screenshot',
-    description: 'Capture 800px lowRes screenshot (saves context). Use hiRes:true only when details critical. Auto-deletes >7 days, keeps 10 recent.',
+    description: 'Capture 800px JPEG (saves context). Use hiRes:true only when critical. Max 20 kept.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -64,7 +64,7 @@ export const toolDefinitions: Tool[] = [
         selector: { type: 'string' },
         filename: { type: 'string' },
         directory: { type: 'string' },
-        hiRes: { type: 'boolean', default: false, description: 'Save high resolution (only when lowRes insufficient)' }
+        hiRes: { type: 'boolean', default: false }
       }
     }
   },
@@ -100,50 +100,6 @@ export const toolDefinitions: Tool[] = [
         amount: { type: 'number', default: 500 }
       }
     }
-  },
-  {
-    name: 'go_back',
-    description: 'Browser back',
-    inputSchema: { type: 'object', properties: {} }
-  },
-  {
-    name: 'go_forward',
-    description: 'Browser forward',
-    inputSchema: { type: 'object', properties: {} }
-  },
-  {
-    name: 'refresh',
-    description: 'Reload page',
-    inputSchema: { type: 'object', properties: {} }
-  },
-  {
-    name: 'get_cookies',
-    description: 'Get cookies',
-    inputSchema: {
-      type: 'object',
-      properties: {
-        urls: { type: 'array', items: { type: 'string' } }
-      }
-    }
-  },
-  {
-    name: 'set_cookie',
-    description: 'Set cookie',
-    inputSchema: {
-      type: 'object',
-      properties: {
-        name: { type: 'string' },
-        value: { type: 'string' },
-        domain: { type: 'string' },
-        path: { type: 'string', default: '/' }
-      },
-      required: ['name', 'value']
-    }
-  },
-  {
-    name: 'list_screenshots',
-    description: 'List screenshots',
-    inputSchema: { type: 'object', properties: {} }
   },
   {
     name: 'press_key',
@@ -183,13 +139,13 @@ export const toolDefinitions: Tool[] = [
   },
   {
     name: 'get_console_logs',
-    description: 'Get browser console messages (default: 50 most recent). Use limit to control count.',
+    description: 'Get browser console messages (default: 50, use limit to control)',
     inputSchema: {
       type: 'object',
       properties: {
         clear: { type: 'boolean', default: false },
         filter: { type: 'string' },
-        limit: { type: 'number', default: 50, description: 'Max messages to return (default: 50, use 0 for all)' }
+        limit: { type: 'number', default: 50 }
       }
     }
   },
@@ -206,29 +162,29 @@ export const toolDefinitions: Tool[] = [
   },
   {
     name: 'switch_to_iframe',
-    description: 'Switch to iframe context by selector, name, or index',
+    description: 'Switch to iframe by selector/name/index',
     inputSchema: {
       type: 'object',
       properties: {
-        selector: { type: 'string', description: 'CSS selector for iframe element' },
-        name: { type: 'string', description: 'Name attribute of iframe' },
-        index: { type: 'number', description: 'Zero-based index of iframe' }
+        selector: { type: 'string' },
+        name: { type: 'string' },
+        index: { type: 'number' }
       }
     }
   },
   {
     name: 'switch_to_main_content',
-    description: 'Switch back to main page content from iframe',
+    description: 'Switch to main page from iframe',
     inputSchema: { type: 'object', properties: {} }
   },
   {
     name: 'list_iframes',
-    description: 'List all iframes on current page',
+    description: 'List iframes on page',
     inputSchema: { type: 'object', properties: {} }
   },
   {
     name: 'get_current_frame',
-    description: 'Get current frame context (iframe or main page)',
+    description: 'Get current frame context',
     inputSchema: { type: 'object', properties: {} }
   }
 ];
