@@ -62,7 +62,7 @@ export const toolDefinitions: Tool[] = [
       properties: {
         fullPage: { type: 'boolean', default: false },
         selector: { type: 'string' },
-        filename: { type: 'string' },
+        filename: { type: 'string', description: 'Filename with .jpg extension (e.g., page.jpg)' },
         directory: { type: 'string' },
         hiRes: { type: 'boolean', default: false }
       }
