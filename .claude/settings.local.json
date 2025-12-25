@@ -61,14 +61,18 @@
       "Bash(git checkout:*)",
       "Bash(npm start)",
       "Bash(netstat:*)",
-      "Bash(taskkill:*)"
+      "Bash(taskkill:*)",
+      "Bash(npm config:*)",
+      "Bash(wmic logicaldisk:*)",
+      "Bash(npm run install-browsers:*)",
+      "Bash(node -e:*)",
+      "Bash(rm:*)"
     ],
     "deny": [],
     "ask": []
   },
+  "enableAllProjectMcpServers": true,
   "enabledMcpjsonServers": [
-    "web-agent-mcp",
-    "tdx-api-tickets-mcp"
-  ],
-  "enableAllProjectMcpServers": true
+    "web-agent-mcp"
+  ]
 }

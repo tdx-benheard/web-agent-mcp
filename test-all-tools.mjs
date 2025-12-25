@@ -391,6 +391,107 @@ async function testCookies() {
   }
 }
 
+async function testDialogs() {
+  console.log('\n🚨 Dialog Handling Tests\n' + '-'.repeat(60));
+
+  try {
+    // Navigate to a simple page
+    await sendRequest('tools/call', {
+      name: 'navigate',
+      arguments: { url: 'https://example.com' }
+    });
+
+    // Test 1: Trigger an alert dialog
+    await sendRequest('tools/call', {
+      name: 'execute_console',
+      arguments: { code: 'alert("Test alert message"); "alert triggered"' }
+    });
+
+    // Verify alert was captured
+    const alertResult = await sendRequest('tools/call', {
+      name: 'get_dialogs',
+      arguments: {}
+    });
+    recordTest('Capture alert dialog',
+      alertResult && alertResult.content && alertResult.content[0].text.includes('Test alert message'));
+
+    // Test 2: Trigger a confirm dialog
+    await sendRequest('tools/call', {
+      name: 'execute_console',
+      arguments: { code: 'confirm("Test confirm message"); "confirm triggered"' }
+    });
+
+    const confirmResult = await sendRequest('tools/call', {
+      name: 'get_dialogs',
+      arguments: {}
+    });
+    recordTest('Capture confirm dialog',
+      confirmResult && confirmResult.content && confirmResult.content[0].text.includes('Test confirm message'));
+
+    // Test 3: Trigger a prompt dialog
+    await sendRequest('tools/call', {
+      name: 'execute_console',
+      arguments: { code: 'prompt("Test prompt message", "default value"); "prompt triggered"' }
+    });
+
+    const promptResult = await sendRequest('tools/call', {
+      name: 'get_dialogs',
+      arguments: {}
+    });
+    recordTest('Capture prompt dialog',
+      promptResult && promptResult.content && promptResult.content[0].text.includes('Test prompt message'));
+
+    // Test 4: Configure dialog handler
+    const configResult = await sendRequest('tools/call', {
+      name: 'configure_dialog_handler',
+      arguments: {
+        autoHandle: true,
+        defaultAction: 'dismiss',
+        promptText: 'automated response'
+      }
+    });
+    recordTest('Configure dialog handler',
+      configResult && configResult.content && configResult.content[0].text.includes('dismiss'));
+
+    // Test 5: Verify configuration works - trigger another dialog
+    await sendRequest('tools/call', {
+      name: 'execute_console',
+      arguments: { code: 'alert("After config change"); "done"' }
+    });
+
+    const afterConfigResult = await sendRequest('tools/call', {
+      name: 'get_dialogs',
+      arguments: { limit: 1 }
+    });
+    recordTest('Dialog handler uses new config',
+      afterConfigResult && afterConfigResult.content && afterConfigResult.content[0].text.includes('dismiss'));
+
+    // Test 6: Filter dialogs by type
+    const filterResult = await sendRequest('tools/call', {
+      name: 'get_dialogs',
+      arguments: { filter: 'alert' }
+    });
+    recordTest('Filter dialogs by type',
+      filterResult && filterResult.content);
+
+    // Test 7: Clear dialogs
+    await sendRequest('tools/call', {
+      name: 'get_dialogs',
+      arguments: { clear: true }
+    });
+
+    const afterClear = await sendRequest('tools/call', {
+      name: 'get_dialogs',
+      arguments: {}
+    });
+    recordTest('Clear dialog history',
+      afterClear && afterClear.content && afterClear.content[0].text.includes('No dialogs captured'));
+
+  } catch (error) {
+    recordTest('Dialog handling', false, error.message);
+  }
+}
+
 async function testKeyboard() {
   console.log('\n⌨️  Keyboard Tests\n' + '-'.repeat(60));
 
@@ -417,6 +518,7 @@ async function runAllTests() {
     await testScreenshots();
     await testDebugging();
     await testConsoleExecution();
+    await testDialogs();
     await testCookies();
     await testKeyboard();
 

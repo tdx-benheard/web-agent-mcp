@@ -242,6 +242,131 @@ await mcp__web-agent-mcp__execute_console({
 - Console output from the executed code is captured and available via `get_console_logs`
 - Useful for debugging, testing, and dynamically manipulating pages
 
+## Dialog Handling
+
+The web-agent-mcp server includes automatic browser dialog detection and handling. This prevents automation from hanging when unexpected dialogs appear.
+
+### How Dialog Handling Works
+
+**Event-Driven and Always Active:**
+- The dialog handler is set up once during browser initialization
+- It remains active for the entire browser session
+- **You don't need to "look for" dialogs** - they are captured automatically
+- When any dialog appears (alert, confirm, prompt, beforeunload), the handler fires immediately
+- Dialogs are automatically handled to prevent the automation from hanging
+
+**Why This Is Important:**
+- Without a dialog handler, automation **hangs indefinitely** when a dialog appears
+- You won't get timeout errors - the browser just waits for manual interaction
+- **You won't know a dialog appeared** - automation just stops responding
+- With the handler, dialogs are captured and handled automatically
+
+### Available Dialog Tools
+
+#### get_dialogs Tool
+
+**Purpose**: Retrieve captured browser dialogs.
+
+**Parameters**:
+- `clear` (optional, boolean): Clear the dialog buffer after reading (default: false)
+- `filter` (optional, string): Filter by dialog type (alert/confirm/prompt) or by message text
+- `limit` (optional, number): Max dialogs to return (default: 50, use 0 for all)
+
+**Usage Example**:
+```javascript
+// Get last 50 dialogs (default, saves context)
+await mcp__web-agent-mcp__get_dialogs({});
+
+// Get only alert dialogs
+await mcp__web-agent-mcp__get_dialogs({ filter: 'alert' });
+
+// Get dialogs containing specific text
+await mcp__web-agent-mcp__get_dialogs({ filter: 'Are you sure' });
+
+// Get last 10 dialogs only
+await mcp__web-agent-mcp__get_dialogs({ limit: 10 });
+
+// Get all dialogs and clear the buffer
+await mcp__web-agent-mcp__get_dialogs({ clear: true, limit: 0 });
+```
+
+**Dialog Information Captured**:
+- Type: alert, confirm, prompt, or beforeunload
+- Message: The dialog message text
+- Default value: For prompt dialogs only
+- Timestamp: When the dialog appeared
+- How it was handled: accept or dismiss
+- Prompt response: For prompt dialogs that were accepted
+
+#### configure_dialog_handler Tool
+
+**Purpose**: Configure how dialogs are automatically handled.
+
+**Parameters**:
+- `autoHandle` (optional, boolean): Whether to automatically handle dialogs (default: true)
+- `defaultAction` (optional, string): 'accept' or 'dismiss' (default: 'accept')
+- `promptText` (optional, string): Text to provide for prompt() dialogs (default: empty string)
+
+**Usage Example**:
+```javascript
+// Default behavior - auto-accept all dialogs
+await mcp__web-agent-mcp__configure_dialog_handler({
+  autoHandle: true,
+  defaultAction: 'accept'
+});
+
+// Dismiss dialogs instead of accepting
+await mcp__web-agent-mcp__configure_dialog_handler({
+  defaultAction: 'dismiss'
+});
+
+// Provide custom text for prompt dialogs
+await mcp__web-agent-mcp__configure_dialog_handler({
+  defaultAction: 'accept',
+  promptText: 'automated test response'
+});
+```
+
+**Notes**:
+- Configuration changes apply immediately to all future dialogs
+- The handler is always active - you cannot disable it completely (prevents hangs)
+- Even if `autoHandle` is false, dialogs are still accepted to prevent blocking
+- Changes persist for the entire browser session
+
+### Dialog Handling Workflow
+
+**Typical Usage Pattern**:
+
+```javascript
+// 1. Navigate to a page that might show dialogs
+await mcp__web-agent-mcp__navigate({ url: 'https://example.com/form' });
+
+// 2. Configure how you want dialogs handled (optional)
+await mcp__web-agent-mcp__configure_dialog_handler({
+  defaultAction: 'accept',
+  promptText: 'test data'
+});
+
+// 3. Perform actions that might trigger dialogs
+await mcp__web-agent-mcp__click({ selector: '#delete-button' });
+
+// 4. Check if any dialogs appeared
+const dialogs = await mcp__web-agent-mcp__get_dialogs({});
+// Dialogs are automatically handled, but you can see what appeared
+
+// 5. Verify expected dialog appeared
+if (dialogs.content[0].text.includes('Are you sure')) {
+  console.log('Confirmation dialog was shown and automatically accepted');
+}
+```
+
+**Important Notes**:
+- **Always active**: The handler runs automatically from browser initialization
+- **Event-driven**: No polling or timeouts - instant detection when dialogs appear
+- **Prevents hangs**: Without this, dialogs would freeze automation indefinitely
+- **Transparent**: Automation continues normally, dialogs are handled in the background
+- **Context efficient**: Use `limit` parameter to control how many dialogs are returned
+
 ## Iframe Tools
 
 The web-agent-mcp server supports working with iframes through explicit context switching. This is essential for TeamDynamix applications where content is often loaded in iframes.

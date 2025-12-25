@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "web-agent-mcp": {
+      "type": "stdio",
+      "command": "node",
+      "args": [
+        "E:/Project/web-agent-mcp/dist/index.js"
+      ]
+    }
+  }
+}

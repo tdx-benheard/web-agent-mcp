@@ -161,6 +161,30 @@ export const toolDefinitions: Tool[] = [
     }
   },
   {
+    name: 'get_dialogs',
+    description: 'Get captured browser dialogs (alert/confirm/prompt). Handler is ALWAYS active, auto-captures to prevent hangs.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        clear: { type: 'boolean', default: false },
+        filter: { type: 'string' },
+        limit: { type: 'number', default: 50 }
+      }
+    }
+  },
+  {
+    name: 'configure_dialog_handler',
+    description: 'Configure auto-handling of dialogs (default: auto-accept). Handler is event-driven and ALWAYS active.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        autoHandle: { type: 'boolean' },
+        defaultAction: { type: 'string', enum: ['accept', 'dismiss'] },
+        promptText: { type: 'string' }
+      }
+    }
+  },
+  {
     name: 'switch_to_iframe',
     description: 'Switch to iframe by selector/name/index',
     inputSchema: {

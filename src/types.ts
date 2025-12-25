@@ -8,12 +8,32 @@ export interface ConsoleMessage {
   location?: string;
 }
 
+// Dialog message type
+export interface DialogMessage {
+  type: 'alert' | 'confirm' | 'prompt' | 'beforeunload';
+  message: string;
+  defaultValue?: string;
+  timestamp: number;
+  handled: boolean;
+  response?: 'accept' | 'dismiss';
+  promptText?: string;
+}
+
+// Dialog handler configuration
+export interface DialogHandlerConfig {
+  autoHandle: boolean; // Whether to automatically handle dialogs
+  defaultAction: 'accept' | 'dismiss'; // Default action for alerts/confirms
+  promptText?: string; // Default text for prompts
+}
+
 // Browser state
 export interface BrowserState {
   browser: Browser | null;
   context: BrowserContext | null;
   currentPage: Page | null;
   consoleMessages: ConsoleMessage[];
+  dialogMessages: DialogMessage[];
+  dialogHandlerConfig: DialogHandlerConfig;
   currentFrame: Frame | null;
 }
 
@@ -106,6 +126,18 @@ export interface GetConsoleLogsArgs {
 
 export interface ExecuteConsoleArgs {
   code: string;
+}
+
+export interface GetDialogsArgs {
+  clear?: boolean;
+  filter?: string; // Filter by dialog type
+  limit?: number;
+}
+
+export interface ConfigureDialogHandlerArgs {
+  autoHandle?: boolean;
+  defaultAction?: 'accept' | 'dismiss';
+  promptText?: string;
 }
 
 // Tool result type (matches MCP SDK CallToolResult)

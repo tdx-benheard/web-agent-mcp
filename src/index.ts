@@ -38,6 +38,9 @@ import { handleGetPageContent, handleQueryPage } from './tools/content.js';
 // Import tool handlers - debugging
 import { handleGetConsoleLogs, handleExecuteConsole } from './tools/debugging.js';
 
+// Import tool handlers - dialogs
+import { getDialogs, configureDialogHandlerTool } from './tools/dialogs.js';
+
 // Import tool handlers - iframe
 import { handleSwitchToIframe, handleSwitchToMainContent, handleListIframes, handleGetCurrentFrame } from './tools/iframe.js';
 
@@ -53,7 +56,9 @@ import {
   ScrollArgs,
   PressKeyArgs,
   QueryPageArgs,
-  SwitchToIframeArgs
+  SwitchToIframeArgs,
+  GetDialogsArgs,
+  ConfigureDialogHandlerArgs
 } from './types.js';
 
 // Create MCP server
@@ -126,6 +131,12 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         return await handleGetConsoleLogs(args as { clear?: boolean; filter?: string }) as never;
       case 'execute_console':
         return await handleExecuteConsole(args as { code: string }) as never;
+
+      // Dialog tools
+      case 'get_dialogs':
+        return await getDialogs(args as unknown as GetDialogsArgs) as never;
+      case 'configure_dialog_handler':
+        return await configureDialogHandlerTool(args as unknown as ConfigureDialogHandlerArgs) as never;
 
       // Iframe tools
       case 'switch_to_iframe':
