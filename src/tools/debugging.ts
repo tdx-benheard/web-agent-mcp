@@ -1,5 +1,6 @@
 import { getConsoleMessages, initBrowser } from '../browser.js';
 import { ToolResult } from '../types.js';
+import { truncateResult } from './content.js';
 
 /**
  * Get console messages from the browser
@@ -55,9 +56,9 @@ export async function handleGetConsoleLogs(args: { clear?: boolean; filter?: str
 /**
  * Execute JavaScript code in the browser console
  */
-export async function handleExecuteConsole(args: { code: string }): Promise<ToolResult> {
+export async function handleExecuteConsole(args: { code: string; allowLargeResults?: boolean }): Promise<ToolResult> {
   const page = await initBrowser();
-  const { code } = args;
+  const { code, allowLargeResults } = args;
 
   try {
     // Execute the JavaScript code in the browser context
@@ -88,10 +89,16 @@ export async function handleExecuteConsole(args: { code: string }): Promise<Tool
     }, code);
 
     if (result.success) {
+      const truncatedResult = truncateResult(
+        result.result,
+        allowLargeResults,
+        "Extract specific properties (.dataset, .textContent) instead of .outerHTML"
+      );
+
       return {
         content: [{
           type: 'text',
-          text: `Execution successful. Result:\n${result.result}`
+          text: `Execution successful. Result:\n${truncatedResult}`
         }]
       };
     } else {

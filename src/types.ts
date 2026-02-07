@@ -108,7 +108,8 @@ export interface QueryPageArgs {
     selector: string;
     extract?: 'text' | 'innerText' | 'html' | 'outerHTML';
     index?: number;
-    all?: boolean;
+    max?: number;
+    allowLargeResults?: boolean;
   }>;
 }
 
@@ -126,6 +127,7 @@ export interface GetConsoleLogsArgs {
 
 export interface ExecuteConsoleArgs {
   code: string;
+  allowLargeResults?: boolean;
 }
 
 export interface GetDialogsArgs {
@@ -155,7 +157,8 @@ export interface QuerySpec {
   selector: string;
   extract?: 'text' | 'innerText' | 'html' | 'outerHTML';
   index?: number;
-  all?: boolean;
+  max?: number;
+  allowLargeResults?: boolean;
 }
 
 export type QueryResults = Record<string, string | string[] | null>;

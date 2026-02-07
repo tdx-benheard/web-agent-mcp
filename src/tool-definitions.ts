@@ -115,7 +115,7 @@ export const toolDefinitions: Tool[] = [
   },
   {
     name: 'query_page',
-    description: 'Extract DOM elements by CSS selector',
+    description: 'Extract DOM elements by CSS selector. Returns metadata showing total matches to prevent wasteful re-queries.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -126,9 +126,10 @@ export const toolDefinitions: Tool[] = [
             properties: {
               name: { type: 'string' },
               selector: { type: 'string' },
-              extract: { type: 'string', enum: ['text', 'innerText', 'html', 'outerHTML'], default: 'text' },
-              index: { type: 'number' },
-              all: { type: 'boolean', default: false }
+              extract: { type: 'string', enum: ['text', 'innerText', 'html', 'outerHTML'], default: 'text', description: 'What to extract. html/outerHTML are expensive (1000+ tokens/element) - prefer text or use execute_console.' },
+              index: { type: 'number', description: 'Select specific element by index (0-based, negative for end)' },
+              max: { type: 'number', default: 5, description: 'Max results (1=string, >1=array, 0=unlimited, default=5)' },
+              allowLargeResults: { type: 'boolean', description: 'Allow large html/outerHTML results. Default truncates at 1000 chars/element.' }
             },
             required: ['name', 'selector']
           }
@@ -155,7 +156,8 @@ export const toolDefinitions: Tool[] = [
     inputSchema: {
       type: 'object',
       properties: {
-        code: { type: 'string' }
+        code: { type: 'string' },
+        allowLargeResults: { type: 'boolean', default: false, description: 'Allow results >1000 chars. Default truncates to save tokens.' }
       },
       required: ['code']
     }

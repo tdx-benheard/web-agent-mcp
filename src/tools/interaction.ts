@@ -21,8 +21,8 @@ function decodeIfBase64(text: string): string {
   }
   if (text.startsWith('dpapi:')) {
     const encryptedPassword = text.substring(6); // Remove 'dpapi:' prefix
-    const psCommand = `Add-Type -AssemblyName System.Security; [Text.Encoding]::UTF8.GetString([Security.Cryptography.ProtectedData]::Unprotect([Convert]::FromBase64String('${encryptedPassword}'), $null, 'CurrentUser'))`;
-    return execSync(`powershell -Command "${psCommand}"`, { encoding: 'utf8' }).trim();
+    const psCommand = `Add-Type -AssemblyName System.Security; $encrypted = [Convert]::FromBase64String('${encryptedPassword}'); $decrypted = [Security.Cryptography.ProtectedData]::Unprotect($encrypted, $null, 'CurrentUser'); [Text.Encoding]::UTF8.GetString($decrypted)`;
+    return execSync(`powershell -NoProfile -NonInteractive -Command "${psCommand}"`, { encoding: 'utf8', windowsHide: true } as any).trim();
   }
   return text;
 }
